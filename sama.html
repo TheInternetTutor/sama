@@ -37,34 +37,81 @@
     --legend-font-size:11px;
     --content-max-width:1500px;
   }
-  /* ============================================================
-     CALIBRATED VISUAL PARAMETERS — DEVELOPER CALIBRATION UTILITY
-     Replace this entire block with the generated CSS block.
-     It contains the five interpolated layout and visual presets.
-     ============================================================ */
-  :root {
-    --call-thickness:2.2px;
-    --recursive-ring-thickness:1px;
-    --recursive-ring-radius:5px;
-    --recursive-dot-radius:1.45px;
-    --arrowhead-size:7px;
-    --source-dot-radius:2.5px;
-    --preset-minimal-lane:15px; --preset-minimal-row:20px; --preset-minimal-spacing:5px; --preset-minimal-track:15px;
-    --preset-minimal-call:1.6px; --preset-minimal-ring:0.8px; --preset-minimal-rec-dot:1.2px; --preset-minimal-arrow:5px; --preset-minimal-source-dot:2px;
-    --preset-minimal-ring-radius:4px;
-    --preset-extraCompact-lane:23.75px; --preset-extraCompact-row:21.25px; --preset-extraCompact-spacing:6.25px; --preset-extraCompact-track:16.25px;
-    --preset-extraCompact-call:1.9px; --preset-extraCompact-ring:0.9px; --preset-extraCompact-rec-dot:1.3px; --preset-extraCompact-arrow:6px; --preset-extraCompact-source-dot:2.25px;
-    --preset-extraCompact-ring-radius:4.5px;
-    --preset-compact-lane:32.5px; --preset-compact-row:22.5px; --preset-compact-spacing:7.5px; --preset-compact-track:17.5px;
-    --preset-compact-call:2.2px; --preset-compact-ring:1px; --preset-compact-rec-dot:1.45px; --preset-compact-arrow:7px; --preset-compact-source-dot:2.5px;
-    --preset-compact-ring-radius:5px;
-    --preset-loose-lane:41.25px; --preset-loose-row:23.75px; --preset-loose-spacing:8.75px; --preset-loose-track:18.75px;
-    --preset-loose-call:2.5px; --preset-loose-ring:1.1px; --preset-loose-rec-dot:1.6px; --preset-loose-arrow:8px; --preset-loose-source-dot:2.75px;
-    --preset-loose-ring-radius:5.5px;
-    --preset-wide-lane:50px; --preset-wide-row:25px; --preset-wide-spacing:10px; --preset-wide-track:20px;
-    --preset-wide-call:2.8px; --preset-wide-ring:1.2px; --preset-wide-rec-dot:1.75px; --preset-wide-arrow:9px; --preset-wide-source-dot:3px;
-    --preset-wide-ring-radius:6px;
-  }
+/* ============================================================
+   CALIBRATED VISUAL PARAMETERS — DEVELOPER CALIBRATION UTILITY
+   Generated from saved Minimal and Wide endpoint values.
+   Contains all five linearly interpolated presets.
+   Replace the existing calibrated visual-parameters block
+   with this entire section. Do not edit surrounding code.
+   ============================================================ */
+:root {
+  /* Minimal */
+  --preset-minimal-lane:15px;
+  --preset-minimal-row:20px;
+  --preset-minimal-spacing:5px;
+  --preset-minimal-track:15px;
+  --preset-minimal-call:1.5px;
+  --preset-minimal-ring:1.5px;
+  --preset-minimal-ring-radius:5.5px;
+  --preset-minimal-rec-dot:1.5px;
+  --preset-minimal-arrow:5px;
+  --preset-minimal-source-dot:2px;
+  /* Extra Compact */
+  --preset-extraCompact-lane:23.75px;
+  --preset-extraCompact-row:21.25px;
+  --preset-extraCompact-spacing:6.25px;
+  --preset-extraCompact-track:16.25px;
+  --preset-extraCompact-call:1.875px;
+  --preset-extraCompact-ring:1.625px;
+  --preset-extraCompact-ring-radius:6.625px;
+  --preset-extraCompact-rec-dot:2.25px;
+  --preset-extraCompact-arrow:6.25px;
+  --preset-extraCompact-source-dot:3px;
+  /* Compact */
+  --preset-compact-lane:32.5px;
+  --preset-compact-row:22.5px;
+  --preset-compact-spacing:7.5px;
+  --preset-compact-track:17.5px;
+  --preset-compact-call:2.25px;
+  --preset-compact-ring:1.75px;
+  --preset-compact-ring-radius:7.75px;
+  --preset-compact-rec-dot:3px;
+  --preset-compact-arrow:7.5px;
+  --preset-compact-source-dot:4px;
+  /* Loose */
+  --preset-loose-lane:41.25px;
+  --preset-loose-row:23.75px;
+  --preset-loose-spacing:8.75px;
+  --preset-loose-track:18.75px;
+  --preset-loose-call:2.625px;
+  --preset-loose-ring:1.875px;
+  --preset-loose-ring-radius:8.875px;
+  --preset-loose-rec-dot:3.75px;
+  --preset-loose-arrow:8.75px;
+  --preset-loose-source-dot:5px;
+  /* Wide */
+  --preset-wide-lane:50px;
+  --preset-wide-row:25px;
+  --preset-wide-spacing:10px;
+  --preset-wide-track:20px;
+  --preset-wide-call:3px;
+  --preset-wide-ring:2px;
+  --preset-wide-ring-radius:10px;
+  --preset-wide-rec-dot:4.5px;
+  --preset-wide-arrow:10px;
+  --preset-wide-source-dot:6px;
+  /* Current viewer defaults; runtime controls may override these. */
+  --lane-column-width:32.5px;
+  --function-row-height:22.5px;
+  --panel-padding:7.5px;
+  --track-thickness:17.5px;
+  --call-thickness:2.25px;
+  --recursive-ring-thickness:1.75px;
+  --recursive-ring-radius:7.75px;
+  --recursive-dot-radius:3px;
+  --arrowhead-size:7.5px;
+  --source-dot-radius:4px;
+}
   *{box-sizing:border-box}
   body{margin:0;padding:var(--page-padding);color:var(--text-color);background:var(--page-background);font:var(--base-font-size)/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
   main{max-width:var(--content-max-width);margin:0 auto}
