@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modular Function Call Matrix</title>
+<style>
+  :root {
+    --name-width: 112px;
+    --slot-width: 104px;
+    --row-height: 68px;
+    --ink: #20242a;
+    --muted: #737b86;
+    --track: #c6cbd2;
+    --call: #245f9e;
+    --conditional: #a15c16;
+    --paper: #fff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 28px;
+    color: var(--ink);
+    background: #f4f6f8;
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 1120px; margin: 0 auto; }
+  h1 { margin: 0 0 6px; font-size: 22px; font-weight: 650; }
+  .subtitle { margin: 0 0 24px; color: var(--muted); }
+  .matrix-shell {
+    overflow-x: auto;
+    padding: 22px 20px 18px;
+    background: var(--paper);
+    border-radius: 10px;
+    box-shadow: 0 2px 12px #18253612;
+  }
+  .matrix {
+    position: relative;
+    width: calc(var(--name-width) + 8 * var(--slot-width));
+    min-width: calc(var(--name-width) + 8 * var(--slot-width));
+    height: calc(8 * var(--row-height));
+  }
+  table {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    table-layout: fixed;
+    border: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  col.name { width: var(--name-width); }
+  col.slot { width: var(--slot-width); }
+  td {
+    height: var(--row-height);
+    border: 0;
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+  }
+  td.name {
+    padding: 0 10px 0 0;
+    text-align: right;
+    white-space: nowrap;
+    font: 600 14px/1.0 ui-monospace, SFMono-Regular, Consolas, monospace;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+  }
+  td.slot { background: transparent; }
+  svg.overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .function-track { stroke: var(--track); stroke-width: 1.35; fill: none; }
+  .call-path { stroke: var(--call); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .conditional-path { stroke: var(--conditional); stroke-width: 2.5; stroke-dasharray: 6 5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .source-dot { fill: var(--call); }
+  .conditional-dot { fill: var(--conditional); }
+  .call-label { fill: var(--muted); font: 11px system-ui, sans-serif; }
+  .legend { display: flex; flex-wrap: wrap; gap: 20px; margin: 20px 0 0 4px; color: #4f5863; font-size: 12px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 7px; }
+  .legend-line { width: 28px; border-top: 2.5px solid var(--call); }
+  .legend-line.dashed { border-top-style: dashed; border-color: var(--conditional); }
+  .legend-track { width: 28px; border-top: 1.35px solid var(--track); }
+  .notes { margin: 18px 4px 0; color: var(--muted); font-size: 12px; }
+  @media (max-width: 700px) {
+    body { padding: 14px; }
+    .matrix-shell { padding: 14px 10px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Modular Function Call Matrix</h1>
+  <p class="subtitle">Eight functions · seven call relationships · SVG paths over a borderless HTML table</p>
+
+  <section class="matrix-shell" aria-label="Function call matrix">
+    <div class="matrix">
+      <table aria-label="Functions and call positions">
+        <colgroup>
+          <col class="name">
+          <col class="slot"><col class="slot"><col class="slot"><col class="slot">
+          <col class="slot"><col class="slot"><col class="slot"><col class="slot">
+        </colgroup>
+        <tbody>
+          <tr><td class="name">A.a1</td><td class="slot" colspan="8"></td></tr>
+          <tr><td class="name">A.a2</td><td class="slot" colspan="8"></td></tr>
+          <tr><td class="name">B.b1</td><td class="slot" colspan="8"></td></tr>
+          <tr><td class="name">B.b2</td><td class="slot" colspan="8"></td></tr>
+          <tr><td class="name">B.b3</td><td class="slot" colspan="8"></td></tr>
+          <tr><td class="name">C.c1</td><td class="slot" colspan="8"></td></tr>
+          <tr><td class="name">C.c2</td><td class="slot" colspan="8"></td></tr>
+          <tr><td class="name">C.c3</td><td class="slot" colspan="8"></td></tr>
+        </tbody>
+      </table>
+
+      <!-- One SVG coordinate plane keeps all function tracks and call paths aligned. -->
+      <svg class="overlay" viewBox="0 0 944 544" role="img" aria-label="Call arrows connecting the functions">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L7,3.5 L0,7 Z" fill="#245f9e" />
+          </marker>
+          <marker id="arrow-conditional" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L7,3.5 L0,7 Z" fill="#a15c16" />
+          </marker>
+        </defs>
+
+        <!-- Function tracks: each line meets the vertical center of its name row. -->
+        <g class="function-track">
+          <path d="M0 34 H944"/><path d="M0 102 H944"/>
+          <path d="M0 170 H944"/><path d="M0 238 H944"/>
+          <path d="M0 306 H944"/><path d="M0 374 H944"/>
+          <path d="M0 442 H944"/><path d="M0 510 H944"/>
+        </g>
+
+        <!-- 1. A.a1 calls A.a2 (downward, same module). -->
+        <path class="call-path" d="M216 34 H246 V102 H216" marker-end="url(#arrow)"/>
+        <circle class="source-dot" cx="216" cy="34" r="3.5"/>
+
+        <!-- 2. A.a1 calls B.b3 (downward, cross-module). -->
+        <path class="call-path" d="M320 34 H350 V306 H320" marker-end="url(#arrow)"/>
+        <circle class="source-dot" cx="320" cy="34" r="3.5"/>
+
+        <!-- 3. B.b3 conditionally calls B.b2 (upward). -->
+        <path class="conditional-path" d="M424 306 H454 V238 H424" marker-end="url(#arrow-conditional)"/>
+        <circle class="conditional-dot" cx="424" cy="306" r="3.5"/>
+        <path d="M454 264 l6 6 -6 6 -6 -6 Z" fill="#fff" stroke="#a15c16" stroke-width="1.7"/>
+
+        <!-- 4. B.b3 directly calls itself (recursive self-loop). -->
+        <path class="call-path" d="M528 306 H570 C592 306 592 346 570 346 H548 C530 346 530 326 548 326" marker-end="url(#arrow)"/>
+        <circle class="source-dot" cx="528" cy="306" r="3.5"/>
+
+        <!-- 5. A.a2 calls B.b1. -->
+        <path class="call-path" d="M632 102 H662 V170 H632" marker-end="url(#arrow)"/>
+        <circle class="source-dot" cx="632" cy="102" r="3.5"/>
+
+        <!-- 6. B.b1 calls A.a2: the reverse edge completes mutual recursion. -->
+        <path class="call-path" d="M736 170 H766 V102 H736" marker-end="url(#arrow)"/>
+        <circle class="source-dot" cx="736" cy="170" r="3.5"/>
+
+        <!-- 7. C.c1 calls A.a2 (upward, cross-module). -->
+        <path class="call-path" d="M840 374 H884 V102 H840" marker-end="url(#arrow)"/>
+        <circle class="source-dot" cx="840" cy="374" r="3.5"/>
+      </svg>
+    </div>
+
+    <div class="legend" aria-label="Legend">
+      <span class="legend-item"><span class="legend-track"></span> Function track</span>
+      <span class="legend-item"><span class="legend-line"></span> Unconditional call (arrow points to callee)</span>
+      <span class="legend-item"><span class="legend-line dashed"></span> Conditional call</span>
+    </div>
+    <p class="notes">The two opposing arrows between A.a2 and B.b1 represent mutual recursion. The loop beside B.b3 represents direct recursion. Call lanes are separated horizontally to keep the relationships visible; colors and data-driven generation are intentionally deferred.</p>
+  </section>
+</main>
+</body>
+</html>
