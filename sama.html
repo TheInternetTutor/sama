@@ -4,46 +4,96 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0e161e">
-<title>Modular Function Call Matrix — Dark Theme</title>
+<title>Modular Function Call Matrix — Configurable Dark Theme</title>
 <style>
+  /*
+   * ================================================================
+   * DISPLAY CONFIGURATION
+   * Change values in this section to tune the diagram.
+   * Set --cell-border-width to 0px to hide the inspection grid.
+   * ================================================================
+   */
   :root {
-    --name-width: 112px;
-    --slot-width: 104px;
-    --row-height: 68px;
-    --ink: #e6edf5;
-    --muted: #9eacba;
-    --track: #778695;
-    --call: #8ecbff;
-    --conditional: #f2bd78;
-    --paper: #17232e;
-    --cell-border: #394957;
-    --page: #0e161e;
-    --legend: #c0ccd7;
+    /* --- Overall theme --- */
+    --page-background: #0e161e;       /* Browser page background */
+    --panel-background: #17232e;      /* Matrix panel background */
+    --text-color: #e6edf5;            /* Main headings and function names */
+    --muted-color: #9eacba;            /* Subtitle and explanatory notes */
+    --legend-color: #c0ccd7;           /* Legend text */
+
+    /* --- Matrix geometry --- */
+    --name-column-width: 112px;       /* Dedicated function-name column */
+    --lane-column-width: 104px;       /* Width of each call-order lane */
+    --function-row-height: 68px;      /* Vertical spacing per function row */
+    --lane-count: 8;                  /* Must match the number of lane cells in each HTML row */
+    --function-count: 8;              /* Must match the number of function rows in the HTML */
+
+    /* --- Function tracks and call paths --- */
+    --track-color: #778695;           /* Horizontal function tracks */
+    --track-thickness: 1.35px;
+    --call-color: #8ecbff;            /* Unconditional call paths, dots, and arrows */
+    --call-thickness: 2.5px;
+    --conditional-color: #f2bd78;     /* Conditional call paths, dots, and arrows */
+    --conditional-thickness: 2.5px;
+    --conditional-dash-pattern: 6 5;
+
+    /* --- Table-cell inspection borders --- */
+    --cell-border-color: #394957;     /* Subtle grid color for dark theme */
+    --cell-border-width: 1px;         /* Set to 0px to turn all cell borders off */
+
+    /* --- Page and panel spacing --- */
+    --page-padding: 28px;
+    --panel-padding-top: 22px;
+    --panel-padding-horizontal: 20px;
+    --panel-padding-bottom: 18px;
+    --panel-corner-radius: 10px;
+    --panel-shadow: 0 4px 18px #00000055;
+    --content-max-width: 1120px;
+
+    /* --- Typography --- */
+    --base-font-size: 14px;
+    --heading-font-size: 22px;
+    --name-font-size: 14px;
+    --subtitle-gap: 24px;
+    --legend-font-size: 12px;
+    --notes-font-size: 12px;
+
+    /* --- Legend and annotation spacing --- */
+    --legend-gap: 20px;
+    --legend-line-width: 28px;
+    --legend-top-gap: 20px;
+    --notes-top-gap: 18px;
   }
+
   * { box-sizing: border-box; }
+
   body {
     margin: 0;
-    padding: 28px;
-    color: var(--ink);
-    background: var(--page);
-    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: var(--page-padding);
+    color: var(--text-color);
+    background: var(--page-background);
+    font: var(--base-font-size)/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
   }
-  main { max-width: 1120px; margin: 0 auto; }
-  h1 { margin: 0 0 6px; font-size: 22px; font-weight: 650; }
-  .subtitle { margin: 0 0 24px; color: var(--muted); }
+
+  main { max-width: var(--content-max-width); margin: 0 auto; }
+  h1 { margin: 0 0 6px; font-size: var(--heading-font-size); font-weight: 650; }
+  .subtitle { margin: 0 0 var(--subtitle-gap); color: var(--muted-color); }
+
   .matrix-shell {
     overflow-x: auto;
-    padding: 22px 20px 18px;
-    background: var(--paper);
-    border-radius: 10px;
-    box-shadow: 0 4px 18px #00000055;
+    padding: var(--panel-padding-top) var(--panel-padding-horizontal) var(--panel-padding-bottom);
+    background: var(--panel-background);
+    border-radius: var(--panel-corner-radius);
+    box-shadow: var(--panel-shadow);
   }
+
   .matrix {
     position: relative;
-    width: calc(var(--name-width) + 8 * var(--slot-width));
-    min-width: calc(var(--name-width) + 8 * var(--slot-width));
-    height: calc(8 * var(--row-height));
+    width: calc(var(--name-column-width) + var(--lane-count) * var(--lane-column-width));
+    min-width: calc(var(--name-column-width) + var(--lane-count) * var(--lane-column-width));
+    height: calc(var(--function-count) * var(--function-row-height));
   }
+
   table {
     position: absolute;
     inset: 0;
@@ -54,25 +104,30 @@
     border-collapse: collapse;
     border-spacing: 0;
   }
-  col.name { width: var(--name-width); }
-  col.slot { width: var(--slot-width); }
+
+  col.name { width: var(--name-column-width); }
+  col.slot { width: var(--lane-column-width); }
+
   td {
-    height: var(--row-height);
-    border: 1px solid var(--cell-border);
+    height: var(--function-row-height);
+    border: var(--cell-border-width) solid var(--cell-border-color);
     padding: 0;
     margin: 0;
     vertical-align: middle;
   }
+
   td.name {
     padding: 0 10px 0 0;
     text-align: right;
     white-space: nowrap;
-    font: 600 14px/1.0 ui-monospace, SFMono-Regular, Consolas, monospace;
+    font: 600 var(--name-font-size)/1.0 ui-monospace, SFMono-Regular, Consolas, monospace;
     background: transparent;
     position: relative;
     z-index: 2;
   }
+
   td.slot { background: transparent; }
+
   svg.overlay {
     position: absolute;
     inset: 0;
@@ -82,18 +137,49 @@
     pointer-events: none;
     z-index: 1;
   }
-  .function-track { stroke: var(--track); stroke-width: 1.35; fill: none; }
-  .call-path { stroke: var(--call); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .conditional-path { stroke: var(--conditional); stroke-width: 2.5; stroke-dasharray: 6 5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-  .source-dot { fill: var(--call); }
-  .conditional-dot { fill: var(--conditional); }
-  .legend { display: flex; flex-wrap: wrap; gap: 20px; margin: 20px 0 0 4px; color: var(--legend); font-size: 12px; }
+
+  .function-track {
+    stroke: var(--track-color);
+    stroke-width: var(--track-thickness);
+    fill: none;
+  }
+
+  .call-path {
+    stroke: var(--call-color);
+    stroke-width: var(--call-thickness);
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .conditional-path {
+    stroke: var(--conditional-color);
+    stroke-width: var(--conditional-thickness);
+    stroke-dasharray: var(--conditional-dash-pattern);
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .source-dot { fill: var(--call-color); }
+  .conditional-dot { fill: var(--conditional-color); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--legend-gap);
+    margin: var(--legend-top-gap) 0 0 4px;
+    color: var(--legend-color);
+    font-size: var(--legend-font-size);
+  }
+
   .legend-item { display: inline-flex; align-items: center; gap: 7px; }
-  .legend-line { width: 28px; border-top: 2.5px solid var(--call); }
-  .legend-line.dashed { border-top-style: dashed; border-color: var(--conditional); }
-  .legend-track { width: 28px; border-top: 1.35px solid var(--track); }
-  .legend-border { width: 28px; border-top: 1px solid var(--cell-border); }
-  .notes { margin: 18px 4px 0; color: var(--muted); font-size: 12px; }
+  .legend-line { width: var(--legend-line-width); border-top: var(--call-thickness) solid var(--call-color); }
+  .legend-line.dashed { border-top-style: dashed; border-color: var(--conditional-color); }
+  .legend-track { width: var(--legend-line-width); border-top: var(--track-thickness) solid var(--track-color); }
+  .legend-border { width: var(--legend-line-width); border-top: var(--cell-border-width) solid var(--cell-border-color); }
+  .notes { margin: var(--notes-top-gap) 4px 0; color: var(--muted-color); font-size: var(--notes-font-size); }
+
   @media (max-width: 700px) {
     body { padding: 14px; }
     .matrix-shell { padding: 14px 10px; }
@@ -103,7 +189,7 @@
 <body>
 <main>
   <h1>Modular Function Call Matrix</h1>
-  <p class="subtitle">Dark theme · eight functions · seven call relationships · subtle table-cell borders</p>
+  <p class="subtitle">Configurable dark theme · eight functions · seven call relationships</p>
 
   <section class="matrix-shell" aria-label="Function call matrix">
     <div class="matrix">
@@ -126,13 +212,13 @@
       </table>
 
       <!-- One SVG coordinate plane keeps all function tracks and call paths aligned. -->
-      <svg class="overlay" viewBox="0 0 944 544" role="img" aria-label="Call arrows connecting the functions">
+      <svg class="overlay" viewBox="0 0 944 544" preserveAspectRatio="none" role="img" aria-label="Call arrows connecting the functions">
         <defs>
           <marker id="arrow" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
-            <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--call)" />
+            <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--call-color)" />
           </marker>
           <marker id="arrow-conditional" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
-            <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--conditional)" />
+            <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--conditional-color)" />
           </marker>
         </defs>
 
@@ -154,7 +240,7 @@
         <!-- 3. B.b3 conditionally calls B.b2. -->
         <path class="conditional-path" d="M424 306 H454 V238 H424" marker-end="url(#arrow-conditional)"/>
         <circle class="conditional-dot" cx="424" cy="306" r="3.5"/>
-        <path d="M454 264 l6 6 -6 6 -6 -6 Z" fill="var(--paper)" stroke="var(--conditional)" stroke-width="1.7"/>
+        <path d="M454 264 l6 6 -6 6 -6 -6 Z" fill="var(--panel-background)" stroke="var(--conditional-color)" stroke-width="1.7"/>
 
         <!-- 4. B.b3 directly calls itself. -->
         <path class="call-path" d="M528 306 H570 C592 306 592 346 570 346 H548 C530 346 530 326 548 326" marker-end="url(#arrow)"/>
@@ -180,7 +266,7 @@
       <span class="legend-item"><span class="legend-line dashed"></span> Conditional call</span>
       <span class="legend-item"><span class="legend-border"></span> HTML table-cell border</span>
     </div>
-    <p class="notes">The two opposing arrows between A.a2 and B.b1 represent mutual recursion. The loop beside B.b3 represents direct recursion. Subtle gray borders expose the underlying table grid for layout inspection. Function tracks begin at the second column, leaving the name column clear. Lighter blue marks unconditional calls; warm amber marks conditional calls.</p>
+    <p class="notes">The two opposing arrows between A.a2 and B.b1 represent mutual recursion. The loop beside B.b3 represents direct recursion. The display settings are grouped at the top of the CSS. Set --cell-border-width to 0px to hide the inspection grid. Function tracks begin at the second column, leaving the name column clear. Blue marks unconditional calls; amber marks conditional calls.</p>
   </section>
 </main>
 </body>
