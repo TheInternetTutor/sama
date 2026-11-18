@@ -18,7 +18,7 @@
     --conditional-color:#f2bd78;
     --cell-border-color:#223344;
 
-    /* Layout presets: compact is the initial default. */
+    /* The name column is measured from the active view labels. */
     --name-column-width:132px;
     --lane-column-width:32.5px;
     --function-row-height:22.5px;
@@ -69,7 +69,7 @@
   col.name{width:var(--name-column-width)}
   col.event{width:var(--lane-column-width)}
   td{height:var(--function-row-height);padding:0;border:var(--cell-border-width) solid var(--cell-border-color);vertical-align:middle}
-  td.name{width:var(--name-column-width);padding-right:12px;text-align:right;white-space:nowrap;font:600 var(--name-font-size)/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--text-color);background:var(--panel-background);position:relative;z-index:2}
+  td.name{width:var(--name-column-width);padding:0 8px 0 4px;text-align:right;white-space:nowrap;font:600 var(--name-font-size)/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--text-color);background:var(--panel-background);position:relative;z-index:2}
   td.event{background:transparent}
   svg.overlay{position:absolute;inset:0;display:block;overflow:visible;pointer-events:none}
   .function-track{stroke:var(--track-color);stroke-width:var(--track-thickness);stroke-linecap:round;fill:none}
@@ -84,6 +84,7 @@
   .swatch.dashed{border-top-style:dashed;border-color:var(--conditional-color)}
   .swatch.track{border-top:var(--track-thickness) solid var(--track-color)}
   .notes{margin:12px 2px 0;color:var(--muted-color);font-size:11px;max-width:1000px}
+  .ai-disclaimer{color:#dce8f4;font-style:italic;font-weight:600;white-space:normal}
   @media(max-width:700px){body{padding:12px}.matrix-shell{padding:12px}}
 </style>
 </head>
@@ -93,8 +94,8 @@
   <p class="subtitle" id="subtitle">GHPUtil · source-derived static analysis · 34 functions</p>
   <div class="toolbar" aria-label="Analysis view">
     <div class="preset-buttons">
-      <button type="button" id="module-view" aria-pressed="false">Module sourcing</button>
-      <button type="button" id="function-view" aria-pressed="true">Function calls</button>
+      <button type="button" id="module-view" aria-pressed="true">Module sourcing</button>
+      <button type="button" id="function-view" aria-pressed="false">Function calls</button>
     </div>
     <span class="status" id="view-description"></span>
   </div>
@@ -102,12 +103,25 @@
     <div class="preset-buttons" id="preset-buttons">
       <button type="button" data-preset="minimal" aria-pressed="false">Minimal</button>
       <button type="button" data-preset="extraCompact" aria-pressed="false">Extra Compact</button>
-      <button type="button" data-preset="compact" aria-pressed="true">Compact</button>
-      <button type="button" data-preset="loose" aria-pressed="false">Loose</button>
+      <button type="button" data-preset="compact" aria-pressed="false">Compact</button>
+      <button type="button" data-preset="loose" aria-pressed="true">Loose</button>
       <button type="button" data-preset="wide" aria-pressed="false">Wide</button>
     </div>
     <span class="status" id="dimensions" aria-live="polite"></span>
   </div>
+  <section class="matrix-shell" aria-label="Function call matrix; scroll horizontally when needed">
+    <div class="matrix" id="matrix">
+      <table id="function-table" aria-label="Function rows and call-event columns"><colgroup id="columns"></colgroup><tbody id="rows"></tbody></table>
+      <svg class="overlay" id="overlay" role="img" aria-label="Each vertical connector represents one call event, from caller row to callee row"></svg>
+    </div>
+    <div class="legend" aria-label="Legend">
+      <span class="legend-item"><span class="swatch track"></span> Function track</span>
+      <span class="legend-item"><span class="swatch"></span><span id="solid-legend">Direct function call</span></span>
+      <span class="legend-item"><span class="swatch dashed"></span><span id="dashed-legend">Dynamic / failure-path dispatch</span></span>
+      <span class="legend-item">Arrowhead points to callee</span>
+    </div>
+    <p class="notes" id="diagram-notes"></p>
+  </section>
   <button class="dev-toggle" id="dev-toggle" type="button" aria-expanded="false" aria-controls="calibration">⚙ Developer / Calibration</button>
   <section class="calibration" id="calibration" aria-label="Developer calibration controls">
     <h2>Layout calibration</h2>
@@ -125,39 +139,27 @@
     <div class="calibration-actions">
       <button type="button" id="copy-current">Copy current configuration</button>
       <button type="button" id="copy-presets">Copy all five presets</button>
-      <button type="button" id="reset-calibration">Reset to Compact</button>
+      <button type="button" id="reset-calibration">Reset to this view's default</button>
     </div>
     <textarea class="config-output" id="config-output" readonly aria-label="Copyable preset configuration" spellcheck="false"></textarea>
     <p class="help">The combined multiplier scales all four dimensions together. Individual edits change a dimension's base value; later combined adjustments preserve those relative differences. Selecting a preset restores its exact baseline. The nearest preset remains highlighted during experimentation.</p>
   </section>
-  <section class="matrix-shell" aria-label="Function call matrix; scroll horizontally when needed">
-    <div class="matrix" id="matrix">
-      <table id="function-table" aria-label="Function rows and call-event columns"><colgroup id="columns"></colgroup><tbody id="rows"></tbody></table>
-      <svg class="overlay" id="overlay" role="img" aria-label="Each vertical connector represents one call event, from caller row to callee row"></svg>
-    </div>
-    <div class="legend" aria-label="Legend">
-      <span class="legend-item"><span class="swatch track"></span> Function track</span>
-      <span class="legend-item"><span class="swatch"></span><span id="solid-legend">Direct function call</span></span>
-      <span class="legend-item"><span class="swatch dashed"></span><span id="dashed-legend">Dynamic / failure-path dispatch</span></span>
-      <span class="legend-item">Arrowhead points to callee</span>
-    </div>
-    <p class="notes" id="diagram-notes"></p>
-  </section>
 </main>
 <script>
 const analysisData = {"project":"GHPUtil","archive":"github_publish(16).zip","analysis_method":"Static source inspection of the extracted Bash scripts. No scripts were executed.","module":{"rows":["github_publish.sh","config.sh","validation.sh","git_inspection.sh","github_api.sh","git_publish.sh","install.sh","github-publish.conf.example",".github-publish.conf"],"calls":[{"from":0,"to":1,"conditional":false,"kind":"source","label":"Bash source"},{"from":0,"to":2,"conditional":false,"kind":"source","label":"Bash source"},{"from":0,"to":3,"conditional":false,"kind":"source","label":"Bash source"},{"from":0,"to":4,"conditional":false,"kind":"source","label":"Bash source"},{"from":0,"to":5,"conditional":false,"kind":"source","label":"Bash source"},{"from":1,"to":7,"conditional":true,"kind":"read","label":"template read during initialization"},{"from":1,"to":8,"conditional":true,"kind":"read","label":"project configuration read"},{"from":6,"to":0,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":1,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":2,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":3,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":4,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":5,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":7,"conditional":true,"kind":"copy","label":"installer copies package file"}],"description":"Package file relationships: solid = Bash source at runtime; dashed = file read or copied by installer."},"function":{"rows":["bootstrap()","main()","usage()","parse_arguments()","prepare_project_config()","load_project_config()","resolve_effective_config()","resolve_visibility()","confirm_repository_creation()","die()","log_timestamp_style()","log()","log_prompt()","run_step()","validate_enum()","resolve_project_root()","initialize_logging()","validate_dependencies()","inspect_local_repository()","inspect_origin_remote()","remote_matches_intended_repository()","load_github_token()","cleanup_api_temp()","api_request()","github_authenticate()","check_github_repository()","github_create_repository()","api_error_message()","configure_origin_remote()","verify_ssh_authentication()","publish_branch()","verify_publication()","report_dry_run()","report_success()","install_main()"],"calls":[{"from":0,"to":1,"conditional":false,"kind":"direct"},{"from":1,"to":13,"conditional":false,"kind":"direct"},{"from":1,"to":3,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":15,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":16,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":4,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":5,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":6,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":17,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":18,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":21,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":24,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":19,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":25,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":7,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":8,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":26,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":28,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":29,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":30,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":31,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":2,"conditional":false,"kind":"direct"},{"from":1,"to":11,"conditional":false,"kind":"direct"},{"from":1,"to":32,"conditional":false,"kind":"direct"},{"from":1,"to":33,"conditional":false,"kind":"direct"},{"from":1,"to":22,"conditional":false,"kind":"direct"},{"from":1,"to":9,"conditional":false,"kind":"direct"},{"from":13,"to":22,"conditional":true,"kind":"failure cleanup"},{"from":4,"to":9,"conditional":false,"kind":"direct"},{"from":4,"to":11,"conditional":false,"kind":"direct"},{"from":4,"to":12,"conditional":false,"kind":"direct"},{"from":5,"to":9,"conditional":false,"kind":"direct"},{"from":5,"to":11,"conditional":false,"kind":"direct"},{"from":6,"to":14,"conditional":false,"kind":"direct"},{"from":6,"to":9,"conditional":false,"kind":"direct"},{"from":6,"to":11,"conditional":false,"kind":"direct"},{"from":7,"to":14,"conditional":false,"kind":"direct"},{"from":7,"to":12,"conditional":false,"kind":"direct"},{"from":8,"to":9,"conditional":false,"kind":"direct"},{"from":8,"to":12,"conditional":false,"kind":"direct"},{"from":9,"to":11,"conditional":false,"kind":"direct"},{"from":11,"to":10,"conditional":false,"kind":"direct"},{"from":3,"to":9,"conditional":false,"kind":"direct"},{"from":14,"to":9,"conditional":false,"kind":"direct"},{"from":15,"to":9,"conditional":false,"kind":"direct"},{"from":16,"to":9,"conditional":false,"kind":"direct"},{"from":17,"to":9,"conditional":false,"kind":"direct"},{"from":18,"to":9,"conditional":false,"kind":"direct"},{"from":18,"to":11,"conditional":false,"kind":"direct"},{"from":19,"to":20,"conditional":false,"kind":"direct"},{"from":19,"to":9,"conditional":false,"kind":"direct"},{"from":19,"to":11,"conditional":false,"kind":"direct"},{"from":21,"to":9,"conditional":false,"kind":"direct"},{"from":23,"to":9,"conditional":false,"kind":"direct"},{"from":24,"to":23,"conditional":false,"kind":"direct"},{"from":24,"to":9,"conditional":false,"kind":"direct"},{"from":25,"to":23,"conditional":false,"kind":"direct"},{"from":25,"to":27,"conditional":false,"kind":"direct"},{"from":25,"to":9,"conditional":false,"kind":"direct"},{"from":26,"to":23,"conditional":false,"kind":"direct"},{"from":26,"to":27,"conditional":false,"kind":"direct"},{"from":26,"to":9,"conditional":false,"kind":"direct"},{"from":26,"to":11,"conditional":false,"kind":"direct"},{"from":28,"to":9,"conditional":false,"kind":"direct"},{"from":28,"to":11,"conditional":false,"kind":"direct"},{"from":29,"to":9,"conditional":false,"kind":"direct"},{"from":29,"to":11,"conditional":false,"kind":"direct"},{"from":30,"to":9,"conditional":false,"kind":"direct"},{"from":30,"to":11,"conditional":false,"kind":"direct"},{"from":31,"to":9,"conditional":false,"kind":"direct"},{"from":31,"to":11,"conditional":false,"kind":"direct"},{"from":32,"to":11,"conditional":false,"kind":"direct"},{"from":33,"to":11,"conditional":false,"kind":"direct"}],"description":"Static function relationships. Dashed amber = call target dispatched through run_step or failure-only cleanup. Ordering is an inferred workflow/declaration presentation, not a runtime trace."},"notes":["github_publish.sh is the normal runtime entry point and sources five implementation modules.","install.sh is a separate installer entry point; it copies six shell scripts and the configuration template.","config.sh reads github-publish.conf.example when initializing a project and reads the project .github-publish.conf at runtime.","The project configuration is data, not a sourced Bash module.","run_step invokes function names passed to it by main; the targets are represented as dashed dispatch edges.","Functions with no identified user-defined caller remain in the diagram; this does not prove they are unused.","Calls into Bash builtins, external commands, and operating-system utilities are excluded from the function-to-function graph."]};
-let activeView = 'function';
-let functionsList = analysisData.function.rows;
-let calls = analysisData.function.calls;
+let activeView = 'module';
+let functionsList = analysisData.module.rows;
+let calls = analysisData.module.calls;
 const presets = {
-  minimal:{name:132,lane:15,row:20,spacing:5,track:15},
-  extraCompact:{name:132,lane:23.75,row:21.25,spacing:6.25,track:16.25},
-  compact:{name:132,lane:32.5,row:22.5,spacing:7.5,track:17.5},
-  loose:{name:150,lane:41.25,row:23.75,spacing:8.75,track:18.75},
-  wide:{name:170,lane:50,row:25,spacing:10,track:20}
+  minimal:{lane:15,row:20,spacing:5,track:15},
+  extraCompact:{lane:23.75,row:21.25,spacing:6.25,track:16.25},
+  compact:{lane:32.5,row:22.5,spacing:7.5,track:17.5},
+  loose:{lane:41.25,row:23.75,spacing:8.75,track:18.75},
+  wide:{lane:50,row:25,spacing:10,track:20}
 };
 const presetLabels={minimal:'Minimal',extraCompact:'Extra Compact',compact:'Compact',loose:'Loose',wide:'Wide'};
-const state={preset:'compact',density:1,base:{lane:32.5,row:22.5,spacing:7.5,track:17.5}};
+const viewDefaults={module:'loose',function:'minimal'};
+const state={preset:'loose',density:1,base:{lane:41.25,row:23.75,spacing:8.75,track:18.75}};
 const NS="http://www.w3.org/2000/svg";
 const matrix=document.getElementById('matrix');
 const table=document.getElementById('function-table');
@@ -197,7 +199,15 @@ function updateConfigOutput(){
 }
 function render(){
   const e=effective();
-  const p={name:presets[state.preset].name,lane:e.lane,row:e.row,spacing:e.spacing,track:e.track};
+  const displayNames=functionsList.map(name=>activeView==='function'?name.replace(/\(\)$/,''):name);
+  const measureCanvas=document.createElement('canvas');
+  const measureContext=measureCanvas.getContext('2d');
+  const labelFont=getComputedStyle(document.documentElement).getPropertyValue('--name-font-size').trim()||'12px';
+  measureContext.font=`600 ${labelFont} ui-monospace, SFMono-Regular, Consolas, monospace`;
+  const longestLabelWidth=displayNames.reduce((max,name)=>Math.max(max,measureContext.measureText(name).width),0);
+  const nameColumnWidth=Math.ceil(longestLabelWidth+12);
+  const p={name:nameColumnWidth,lane:e.lane,row:e.row,spacing:e.spacing,track:e.track};
+  document.documentElement.style.setProperty('--name-column-width',p.name+'px');
   document.documentElement.style.setProperty('--panel-padding',p.spacing+'px');
   document.documentElement.style.setProperty('--track-thickness',p.track+'px');
   const W=p.name+calls.length*p.lane;
@@ -207,10 +217,10 @@ function render(){
   document.documentElement.style.setProperty('--lane-column-width',p.lane+'px');
   document.documentElement.style.setProperty('--function-row-height',p.row+'px');
   columns.replaceChildren();
-  const nameCol=document.createElement('col');nameCol.className='name';columns.appendChild(nameCol);
+  const nameCol=document.createElement('col');nameCol.className='name';nameCol.style.width=p.name+'px';columns.appendChild(nameCol);
   for(let i=0;i<calls.length;i++){const c=document.createElement('col');c.className='event';columns.appendChild(c);}
   rows.replaceChildren();
-  functionsList.forEach(name=>{const tr=document.createElement('tr');const label=document.createElement('td');label.className='name';label.textContent=name;tr.appendChild(label);for(let i=0;i<calls.length;i++){const td=document.createElement('td');td.className='event';tr.appendChild(td);}rows.appendChild(tr);});
+  displayNames.forEach(name=>{const tr=document.createElement('tr');const label=document.createElement('td');label.className='name';label.textContent=name;label.style.width=p.name+'px';tr.appendChild(label);for(let i=0;i<calls.length;i++){const td=document.createElement('td');td.className='event';tr.appendChild(td);}rows.appendChild(tr);});
   svg.replaceChildren();svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('preserveAspectRatio','xMinYMin meet');
   const defs=svgEl('defs',{});
   const marker=svgEl('marker',{id:'arrow',markerWidth:7,markerHeight:7,refX:5.8,refY:3.5,orient:'auto',markerUnits:'userSpaceOnUse'},defs);
@@ -251,8 +261,12 @@ function selectView(name){
   document.getElementById('dashed-legend').textContent=name==='module'?'Template/config read or installer copy':'Dynamic dispatch / failure-only cleanup';
   document.getElementById('diagram-notes').textContent=(name==='module'
     ? 'Module view: horizontal tracks are package files. Solid connectors show the five runtime Bash source statements. Dashed connectors show configuration/template reads and installer copy dependencies. The project configuration is an input file, not a sourced module.'
-    : 'Function view: horizontal tracks are declared Bash functions. Each vertical event column is one statically inferred caller-to-callee relationship. Dashed amber connectors mark run_step dispatch or failure-only cleanup. Column order is an inferred presentation, not execution timing or a runtime trace.') + ' ' + analysisData.notes.join(' ');
-  render();
+    : 'Function view: horizontal tracks are declared Bash functions. Each vertical event column is one statically inferred caller-to-callee relationship. Dashed amber connectors mark run_step dispatch or failure-only cleanup. Column order is an inferred presentation, not execution timing or a runtime trace.') + ' ' + analysisData.notes.join(' ') + ' ';
+  const disclaimer=document.createElement('span');
+  disclaimer.className='ai-disclaimer';
+  disclaimer.textContent='AI-generated chart; it may contain mistakes.';
+  document.getElementById('diagram-notes').appendChild(disclaimer);
+  selectPreset(viewDefaults[name]);
 }
 document.getElementById('module-view').addEventListener('click',()=>selectView('module'));
 document.getElementById('function-view').addEventListener('click',()=>selectView('function'));
@@ -279,9 +293,8 @@ document.getElementById('copy-presets').addEventListener('click',()=>{
   const all=Object.fromEntries(Object.entries(presets).map(([name,p])=>[name,configObject(name,{lane:p.lane,row:p.row,spacing:p.spacing,track:p.track})]));
   copyText(JSON.stringify(all,null,2));
 });
-document.getElementById('reset-calibration').addEventListener('click',()=>selectPreset('compact'));
-selectView('function');
-selectPreset('compact');
+document.getElementById('reset-calibration').addEventListener('click',()=>selectPreset(viewDefaults[activeView]));
+selectView('module');
 
 </script>
 </body>
