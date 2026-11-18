@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0e161e">
-<title>Modular Function Call Matrix — Refined</title>
+<title>GHPUtil — Static Module and Function Analysis</title>
 <style>
   :root {
     /* Theme */
@@ -77,7 +77,7 @@
   .conditional-path{stroke:var(--conditional-color);stroke-width:var(--call-thickness);stroke-dasharray:var(--conditional-dash-pattern);stroke-linecap:round;fill:none}
   .source-dot{fill:var(--call-color)}
   .conditional-dot{fill:var(--conditional-color)}
-  .event-number{fill:#8193a4;font:9px ui-monospace,monospace;text-anchor:middle}
+  .event-number{fill:#8193a4;font:8px ui-monospace,monospace;text-anchor:middle}
   .legend{display:flex;flex-wrap:wrap;gap:12px 20px;margin:14px 2px 0;color:var(--legend-color);font-size:var(--legend-font-size)}
   .legend-item{display:inline-flex;align-items:center;gap:7px}
   .swatch{width:25px;height:0;border-top:2px solid var(--call-color)}
@@ -90,7 +90,14 @@
 <body>
 <main>
   <h1>Modular Function Call Matrix</h1>
-  <p class="subtitle">Refined layout prototype · 20 functions · 30 illustrative call events</p>
+  <p class="subtitle" id="subtitle">GHPUtil · source-derived static analysis · 34 functions</p>
+  <div class="toolbar" aria-label="Analysis view">
+    <div class="preset-buttons">
+      <button type="button" id="module-view" aria-pressed="false">Module sourcing</button>
+      <button type="button" id="function-view" aria-pressed="true">Function calls</button>
+    </div>
+    <span class="status" id="view-description"></span>
+  </div>
   <div class="toolbar" aria-label="Diagram layout presets">
     <div class="preset-buttons" id="preset-buttons">
       <button type="button" data-preset="minimal" aria-pressed="false">Minimal</button>
@@ -130,35 +137,18 @@
     </div>
     <div class="legend" aria-label="Legend">
       <span class="legend-item"><span class="swatch track"></span> Function track</span>
-      <span class="legend-item"><span class="swatch"></span> Unconditional call</span>
-      <span class="legend-item"><span class="swatch dashed"></span> Conditional call</span>
+      <span class="legend-item"><span class="swatch"></span><span id="solid-legend">Direct function call</span></span>
+      <span class="legend-item"><span class="swatch dashed"></span><span id="dashed-legend">Dynamic / failure-path dispatch</span></span>
       <span class="legend-item">Arrowhead points to callee</span>
     </div>
-    <p class="notes">Reading the matrix: each horizontal track is a function; each successive vertical column is one statically inferred call event. A connector begins on the caller's track and ends on the callee's track. Separate event columns prevent connectors from crossing. Self-recursion is shown as a small loop within its event column. This is an illustrative stress-test dataset, not a trace of a real program.</p>
+    <p class="notes" id="diagram-notes"></p>
   </section>
 </main>
 <script>
-const functionsList = [
-  "A.main","A.initialize","A.loadConfig","A.run",
-  "B.parseInput","B.validateInput","B.normalizeInput","B.dispatch",
-  "C.readFile","C.decodeData","C.transformData","C.processRecord",
-  "D.writeOutput","D.commitOutput","D.logMessage","D.handleError",
-  "U.trim","U.split","U.join","U.cleanup"
-];
-
-// Each item is one call event, in the illustrative inferred sequence.
-// from/to are function-row indexes; conditional marks a conditional call.
-const calls = [
-  [0,1,0],[0,2,0],[0,14,0],[1,16,0],[1,2,1],
-  [2,4,0],[2,8,0],[4,5,1],[4,17,0],[5,6,0],
-  [6,7,0],[7,10,1],[7,11,0],[8,9,0],[9,10,0],
-  [10,11,0],[11,12,0],[11,15,1],[12,13,0],[13,14,0],
-  [14,16,0],[14,15,1],[15,19,0],[16,17,0],[17,18,0],
-  [18,19,0],[3,7,0],[3,12,1],[6,6,0],[0,19,1]
-].map(([from,to,conditional])=>({from,to,conditional:Boolean(conditional)}));
-
-// Exact five-preset calibration values supplied by Emilio on 2026-11-14.
-// Name-column widths remain unchanged; the four measured dimensions use the new values.
+const analysisData = {"project":"GHPUtil","archive":"github_publish(16).zip","analysis_method":"Static source inspection of the extracted Bash scripts. No scripts were executed.","module":{"rows":["github_publish.sh","config.sh","validation.sh","git_inspection.sh","github_api.sh","git_publish.sh","install.sh","github-publish.conf.example",".github-publish.conf"],"calls":[{"from":0,"to":1,"conditional":false,"kind":"source","label":"Bash source"},{"from":0,"to":2,"conditional":false,"kind":"source","label":"Bash source"},{"from":0,"to":3,"conditional":false,"kind":"source","label":"Bash source"},{"from":0,"to":4,"conditional":false,"kind":"source","label":"Bash source"},{"from":0,"to":5,"conditional":false,"kind":"source","label":"Bash source"},{"from":1,"to":7,"conditional":true,"kind":"read","label":"template read during initialization"},{"from":1,"to":8,"conditional":true,"kind":"read","label":"project configuration read"},{"from":6,"to":0,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":1,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":2,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":3,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":4,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":5,"conditional":true,"kind":"copy","label":"installer copies package file"},{"from":6,"to":7,"conditional":true,"kind":"copy","label":"installer copies package file"}],"description":"Package file relationships: solid = Bash source at runtime; dashed = file read or copied by installer."},"function":{"rows":["bootstrap()","main()","usage()","parse_arguments()","prepare_project_config()","load_project_config()","resolve_effective_config()","resolve_visibility()","confirm_repository_creation()","die()","log_timestamp_style()","log()","log_prompt()","run_step()","validate_enum()","resolve_project_root()","initialize_logging()","validate_dependencies()","inspect_local_repository()","inspect_origin_remote()","remote_matches_intended_repository()","load_github_token()","cleanup_api_temp()","api_request()","github_authenticate()","check_github_repository()","github_create_repository()","api_error_message()","configure_origin_remote()","verify_ssh_authentication()","publish_branch()","verify_publication()","report_dry_run()","report_success()","install_main()"],"calls":[{"from":0,"to":1,"conditional":false,"kind":"direct"},{"from":1,"to":13,"conditional":false,"kind":"direct"},{"from":1,"to":3,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":15,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":16,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":4,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":5,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":6,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":17,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":18,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":21,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":24,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":19,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":25,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":7,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":8,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":26,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":28,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":29,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":30,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":31,"conditional":true,"kind":"run_step dispatch"},{"from":1,"to":2,"conditional":false,"kind":"direct"},{"from":1,"to":11,"conditional":false,"kind":"direct"},{"from":1,"to":32,"conditional":false,"kind":"direct"},{"from":1,"to":33,"conditional":false,"kind":"direct"},{"from":1,"to":22,"conditional":false,"kind":"direct"},{"from":1,"to":9,"conditional":false,"kind":"direct"},{"from":13,"to":22,"conditional":true,"kind":"failure cleanup"},{"from":4,"to":9,"conditional":false,"kind":"direct"},{"from":4,"to":11,"conditional":false,"kind":"direct"},{"from":4,"to":12,"conditional":false,"kind":"direct"},{"from":5,"to":9,"conditional":false,"kind":"direct"},{"from":5,"to":11,"conditional":false,"kind":"direct"},{"from":6,"to":14,"conditional":false,"kind":"direct"},{"from":6,"to":9,"conditional":false,"kind":"direct"},{"from":6,"to":11,"conditional":false,"kind":"direct"},{"from":7,"to":14,"conditional":false,"kind":"direct"},{"from":7,"to":12,"conditional":false,"kind":"direct"},{"from":8,"to":9,"conditional":false,"kind":"direct"},{"from":8,"to":12,"conditional":false,"kind":"direct"},{"from":9,"to":11,"conditional":false,"kind":"direct"},{"from":11,"to":10,"conditional":false,"kind":"direct"},{"from":3,"to":9,"conditional":false,"kind":"direct"},{"from":14,"to":9,"conditional":false,"kind":"direct"},{"from":15,"to":9,"conditional":false,"kind":"direct"},{"from":16,"to":9,"conditional":false,"kind":"direct"},{"from":17,"to":9,"conditional":false,"kind":"direct"},{"from":18,"to":9,"conditional":false,"kind":"direct"},{"from":18,"to":11,"conditional":false,"kind":"direct"},{"from":19,"to":20,"conditional":false,"kind":"direct"},{"from":19,"to":9,"conditional":false,"kind":"direct"},{"from":19,"to":11,"conditional":false,"kind":"direct"},{"from":21,"to":9,"conditional":false,"kind":"direct"},{"from":23,"to":9,"conditional":false,"kind":"direct"},{"from":24,"to":23,"conditional":false,"kind":"direct"},{"from":24,"to":9,"conditional":false,"kind":"direct"},{"from":25,"to":23,"conditional":false,"kind":"direct"},{"from":25,"to":27,"conditional":false,"kind":"direct"},{"from":25,"to":9,"conditional":false,"kind":"direct"},{"from":26,"to":23,"conditional":false,"kind":"direct"},{"from":26,"to":27,"conditional":false,"kind":"direct"},{"from":26,"to":9,"conditional":false,"kind":"direct"},{"from":26,"to":11,"conditional":false,"kind":"direct"},{"from":28,"to":9,"conditional":false,"kind":"direct"},{"from":28,"to":11,"conditional":false,"kind":"direct"},{"from":29,"to":9,"conditional":false,"kind":"direct"},{"from":29,"to":11,"conditional":false,"kind":"direct"},{"from":30,"to":9,"conditional":false,"kind":"direct"},{"from":30,"to":11,"conditional":false,"kind":"direct"},{"from":31,"to":9,"conditional":false,"kind":"direct"},{"from":31,"to":11,"conditional":false,"kind":"direct"},{"from":32,"to":11,"conditional":false,"kind":"direct"},{"from":33,"to":11,"conditional":false,"kind":"direct"}],"description":"Static function relationships. Dashed amber = call target dispatched through run_step or failure-only cleanup. Ordering is an inferred workflow/declaration presentation, not a runtime trace."},"notes":["github_publish.sh is the normal runtime entry point and sources five implementation modules.","install.sh is a separate installer entry point; it copies six shell scripts and the configuration template.","config.sh reads github-publish.conf.example when initializing a project and reads the project .github-publish.conf at runtime.","The project configuration is data, not a sourced Bash module.","run_step invokes function names passed to it by main; the targets are represented as dashed dispatch edges.","Functions with no identified user-defined caller remain in the diagram; this does not prove they are unused.","Calls into Bash builtins, external commands, and operating-system utilities are excluded from the function-to-function graph."]};
+let activeView = 'function';
+let functionsList = analysisData.function.rows;
+let calls = analysisData.function.calls;
 const presets = {
   minimal:{name:132,lane:15,row:20,spacing:5,track:15},
   extraCompact:{name:132,lane:23.75,row:21.25,spacing:6.25,track:16.25},
@@ -245,9 +235,27 @@ function render(){
       svgEl('circle',{cx:x,cy:y1,r:2.5,class:call.conditional?'conditional-dot':'source-dot'});
     }
   });
-  dimensions.textContent=`${presetLabels[state.preset]} · ${functionsList.length} functions · ${calls.length} calls · ${W} × ${H} px`;
+  dimensions.textContent=`${presetLabels[state.preset]} · ${functionsList.length} ${activeView==='module'?'files':'functions'} · ${calls.length} relationships · ${W} × ${H} px`;
   syncControls();
 }
+function selectView(name){
+  activeView=name;
+  const d=analysisData[name];
+  functionsList=d.rows;
+  calls=d.calls;
+  document.getElementById('module-view').setAttribute('aria-pressed',String(name==='module'));
+  document.getElementById('function-view').setAttribute('aria-pressed',String(name==='function'));
+  document.getElementById('subtitle').textContent=`GHPUtil · ${name==='module'?'module dependency':'function call'} static analysis · ${functionsList.length} ${name==='module'?'files':'functions'}`;
+  document.getElementById('view-description').textContent=d.description;
+  document.getElementById('solid-legend').textContent=name==='module'?'Runtime Bash source':'Direct function call';
+  document.getElementById('dashed-legend').textContent=name==='module'?'Template/config read or installer copy':'Dynamic dispatch / failure-only cleanup';
+  document.getElementById('diagram-notes').textContent=(name==='module'
+    ? 'Module view: horizontal tracks are package files. Solid connectors show the five runtime Bash source statements. Dashed connectors show configuration/template reads and installer copy dependencies. The project configuration is an input file, not a sourced module.'
+    : 'Function view: horizontal tracks are declared Bash functions. Each vertical event column is one statically inferred caller-to-callee relationship. Dashed amber connectors mark run_step dispatch or failure-only cleanup. Column order is an inferred presentation, not execution timing or a runtime trace.') + ' ' + analysisData.notes.join(' ');
+  render();
+}
+document.getElementById('module-view').addEventListener('click',()=>selectView('module'));
+document.getElementById('function-view').addEventListener('click',()=>selectView('function'));
 function selectPreset(name){state.preset=name;state.density=1;const p=presets[name];state.base={lane:p.lane,row:p.row,spacing:p.spacing,track:p.track};render();}
 document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>selectPreset(b.dataset.preset)));
 document.getElementById('dev-toggle').addEventListener('click',()=>{
@@ -272,6 +280,7 @@ document.getElementById('copy-presets').addEventListener('click',()=>{
   copyText(JSON.stringify(all,null,2));
 });
 document.getElementById('reset-calibration').addEventListener('click',()=>selectPreset('compact'));
+selectView('function');
 selectPreset('compact');
 
 </script>
