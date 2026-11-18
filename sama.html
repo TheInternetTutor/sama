@@ -20,16 +20,16 @@
 
     /* Layout presets: compact is the initial default. */
     --name-column-width:132px;
-    --lane-column-width:36px;
-    --function-row-height:42px;
-    --track-thickness:25px;
+    --lane-column-width:32.5px;
+    --function-row-height:22.5px;
+    --track-thickness:17.5px;
     --call-thickness:2.2px;
     --conditional-dash-pattern:5 4;
     --cell-border-width:0px;
 
     /* Page and typography */
     --page-padding:22px;
-    --panel-padding:16px;
+    --panel-padding:7.5px;
     --panel-radius:10px;
     --base-font-size:13px;
     --heading-font-size:21px;
@@ -157,17 +157,17 @@ const calls = [
   [18,19,0],[3,7,0],[3,12,1],[6,6,0],[0,19,1]
 ].map(([from,to,conditional])=>({from,to,conditional:Boolean(conditional)}));
 
-// Preset values are calibration starting points. Existing Compact, Loose, and Wide
-// geometry is preserved exactly; the two denser presets are new starting estimates.
+// Exact five-preset calibration values supplied by Emilio on 2026-11-14.
+// Name-column widths remain unchanged; the four measured dimensions use the new values.
 const presets = {
-  minimal:{name:132,lane:24,row:30,spacing:10,track:16},
-  extraCompact:{name:132,lane:30,row:36,spacing:13,track:20},
-  compact:{name:132,lane:36,row:42,spacing:16,track:25},
-  loose:{name:150,lane:52,row:54,spacing:16,track:30},
-  wide:{name:170,lane:68,row:66,spacing:16,track:34}
+  minimal:{name:132,lane:15,row:20,spacing:5,track:15},
+  extraCompact:{name:132,lane:23.75,row:21.25,spacing:6.25,track:16.25},
+  compact:{name:132,lane:32.5,row:22.5,spacing:7.5,track:17.5},
+  loose:{name:150,lane:41.25,row:23.75,spacing:8.75,track:18.75},
+  wide:{name:170,lane:50,row:25,spacing:10,track:20}
 };
 const presetLabels={minimal:'Minimal',extraCompact:'Extra Compact',compact:'Compact',loose:'Loose',wide:'Wide'};
-const state={preset:'compact',density:1,base:{lane:36,row:42,spacing:16,track:25}};
+const state={preset:'compact',density:1,base:{lane:32.5,row:22.5,spacing:7.5,track:17.5}};
 const NS="http://www.w3.org/2000/svg";
 const matrix=document.getElementById('matrix');
 const table=document.getElementById('function-table');
