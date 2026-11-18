@@ -1,7 +1,7 @@
 {
   "project": "GHPUtil",
   "archive": "github_publish(16).zip",
-  "analysis_method": "Static source inspection of the extracted Bash scripts. No scripts were executed.",
+  "analysis_method": "Static source inspection of the extracted Bash scripts. No scripts were executed. The demo_recursive_examples.sh functions and their six recursive relationships are fictitious visualization examples, not source-derived GHPUtil facts.",
   "module": {
     "rows": [
       "github_publish.sh",
@@ -18,583 +18,639 @@
       {
         "from": 0,
         "to": 1,
-        "conditional": false,
-        "kind": "source",
-        "label": "Bash source"
+        "line_type": "solid"
       },
       {
         "from": 0,
         "to": 2,
-        "conditional": false,
-        "kind": "source",
-        "label": "Bash source"
+        "line_type": "solid"
       },
       {
         "from": 0,
         "to": 3,
-        "conditional": false,
-        "kind": "source",
-        "label": "Bash source"
+        "line_type": "solid"
       },
       {
         "from": 0,
         "to": 4,
-        "conditional": false,
-        "kind": "source",
-        "label": "Bash source"
+        "line_type": "solid"
       },
       {
         "from": 0,
         "to": 5,
-        "conditional": false,
-        "kind": "source",
-        "label": "Bash source"
+        "line_type": "solid"
       },
       {
         "from": 1,
         "to": 7,
-        "conditional": true,
-        "kind": "read",
-        "label": "template read during initialization"
+        "line_type": "dashed"
       },
       {
         "from": 1,
         "to": 8,
-        "conditional": true,
-        "kind": "read",
-        "label": "project configuration read"
+        "line_type": "dashed"
       },
       {
         "from": 6,
         "to": 0,
-        "conditional": true,
-        "kind": "copy",
-        "label": "installer copies package file"
+        "line_type": "dashed"
       },
       {
         "from": 6,
         "to": 1,
-        "conditional": true,
-        "kind": "copy",
-        "label": "installer copies package file"
+        "line_type": "dashed"
       },
       {
         "from": 6,
         "to": 2,
-        "conditional": true,
-        "kind": "copy",
-        "label": "installer copies package file"
+        "line_type": "dashed"
       },
       {
         "from": 6,
         "to": 3,
-        "conditional": true,
-        "kind": "copy",
-        "label": "installer copies package file"
+        "line_type": "dashed"
       },
       {
         "from": 6,
         "to": 4,
-        "conditional": true,
-        "kind": "copy",
-        "label": "installer copies package file"
+        "line_type": "dashed"
       },
       {
         "from": 6,
         "to": 5,
-        "conditional": true,
-        "kind": "copy",
-        "label": "installer copies package file"
+        "line_type": "dashed"
       },
       {
         "from": 6,
         "to": 7,
-        "conditional": true,
-        "kind": "copy",
-        "label": "installer copies package file"
+        "line_type": "dashed"
       }
-    ],
-    "description": "Package file relationships: solid = Bash source at runtime; dashed = file read or copied by installer."
+    ]
   },
   "function": {
     "rows": [
-      "bootstrap()",
-      "main()",
-      "usage()",
-      "parse_arguments()",
-      "prepare_project_config()",
-      "load_project_config()",
-      "resolve_effective_config()",
-      "resolve_visibility()",
-      "confirm_repository_creation()",
-      "die()",
-      "log_timestamp_style()",
-      "log()",
-      "log_prompt()",
-      "run_step()",
-      "validate_enum()",
-      "resolve_project_root()",
-      "initialize_logging()",
-      "validate_dependencies()",
-      "inspect_local_repository()",
-      "inspect_origin_remote()",
-      "remote_matches_intended_repository()",
-      "load_github_token()",
-      "cleanup_api_temp()",
-      "api_request()",
-      "github_authenticate()",
-      "check_github_repository()",
-      "github_create_repository()",
-      "api_error_message()",
-      "configure_origin_remote()",
-      "verify_ssh_authentication()",
-      "publish_branch()",
-      "verify_publication()",
-      "report_dry_run()",
-      "report_success()",
-      "install_main()"
+      {
+        "name": "bootstrap()",
+        "module": "github_publish.sh"
+      },
+      {
+        "name": "main()",
+        "module": "github_publish.sh"
+      },
+      {
+        "name": "usage()",
+        "module": "config.sh"
+      },
+      {
+        "name": "demo_self_unconditional()",
+        "module": "demo_recursive_examples.sh"
+      },
+      {
+        "name": "parse_arguments()",
+        "module": "config.sh"
+      },
+      {
+        "name": "prepare_project_config()",
+        "module": "config.sh"
+      },
+      {
+        "name": "load_project_config()",
+        "module": "config.sh"
+      },
+      {
+        "name": "resolve_effective_config()",
+        "module": "config.sh"
+      },
+      {
+        "name": "resolve_visibility()",
+        "module": "config.sh"
+      },
+      {
+        "name": "demo_self_conditional()",
+        "module": "demo_recursive_examples.sh"
+      },
+      {
+        "name": "confirm_repository_creation()",
+        "module": "config.sh"
+      },
+      {
+        "name": "die()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "log_timestamp_style()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "log()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "log_prompt()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "run_step()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "validate_enum()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "resolve_project_root()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "initialize_logging()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "demo_mutual_unconditional_a()",
+        "module": "demo_recursive_examples.sh"
+      },
+      {
+        "name": "demo_mutual_unconditional_b()",
+        "module": "demo_recursive_examples.sh"
+      },
+      {
+        "name": "validate_dependencies()",
+        "module": "validation.sh"
+      },
+      {
+        "name": "inspect_local_repository()",
+        "module": "git_inspection.sh"
+      },
+      {
+        "name": "inspect_origin_remote()",
+        "module": "git_inspection.sh"
+      },
+      {
+        "name": "remote_matches_intended_repository()",
+        "module": "git_inspection.sh"
+      },
+      {
+        "name": "load_github_token()",
+        "module": "github_api.sh"
+      },
+      {
+        "name": "cleanup_api_temp()",
+        "module": "github_api.sh"
+      },
+      {
+        "name": "api_request()",
+        "module": "github_api.sh"
+      },
+      {
+        "name": "demo_mutual_conditional_a()",
+        "module": "demo_recursive_examples.sh"
+      },
+      {
+        "name": "demo_mutual_conditional_b()",
+        "module": "demo_recursive_examples.sh"
+      },
+      {
+        "name": "github_authenticate()",
+        "module": "github_api.sh"
+      },
+      {
+        "name": "check_github_repository()",
+        "module": "github_api.sh"
+      },
+      {
+        "name": "github_create_repository()",
+        "module": "github_api.sh"
+      },
+      {
+        "name": "api_error_message()",
+        "module": "github_api.sh"
+      },
+      {
+        "name": "configure_origin_remote()",
+        "module": "git_publish.sh"
+      },
+      {
+        "name": "verify_ssh_authentication()",
+        "module": "git_publish.sh"
+      },
+      {
+        "name": "publish_branch()",
+        "module": "git_publish.sh"
+      },
+      {
+        "name": "verify_publication()",
+        "module": "git_publish.sh"
+      },
+      {
+        "name": "report_dry_run()",
+        "module": "git_publish.sh"
+      },
+      {
+        "name": "report_success()",
+        "module": "git_publish.sh"
+      },
+      {
+        "name": "install_main()",
+        "module": "install.sh"
+      }
     ],
     "calls": [
       {
         "from": 0,
         "to": 1,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 1,
-        "to": 13,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 1,
-        "to": 3,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "line_type": "solid"
       },
       {
         "from": 1,
         "to": 15,
-        "conditional": true,
-        "kind": "run_step dispatch"
-      },
-      {
-        "from": 1,
-        "to": 16,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "line_type": "solid"
       },
       {
         "from": 1,
         "to": 4,
-        "conditional": true,
-        "kind": "run_step dispatch"
-      },
-      {
-        "from": 1,
-        "to": 5,
-        "conditional": true,
-        "kind": "run_step dispatch"
-      },
-      {
-        "from": 1,
-        "to": 6,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "line_type": "dashed"
       },
       {
         "from": 1,
         "to": 17,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "line_type": "dashed"
       },
       {
         "from": 1,
         "to": 18,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 21,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "to": 5,
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 24,
-        "conditional": true,
-        "kind": "run_step dispatch"
-      },
-      {
-        "from": 1,
-        "to": 19,
-        "conditional": true,
-        "kind": "run_step dispatch"
-      },
-      {
-        "from": 1,
-        "to": 25,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "to": 6,
+        "line_type": "dashed"
       },
       {
         "from": 1,
         "to": 7,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 8,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "to": 21,
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 26,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "to": 22,
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 28,
-        "conditional": true,
-        "kind": "run_step dispatch"
-      },
-      {
-        "from": 1,
-        "to": 29,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "to": 25,
+        "line_type": "dashed"
       },
       {
         "from": 1,
         "to": 30,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "line_type": "dashed"
+      },
+      {
+        "from": 1,
+        "to": 23,
+        "line_type": "dashed"
       },
       {
         "from": 1,
         "to": 31,
-        "conditional": true,
-        "kind": "run_step dispatch"
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 2,
-        "conditional": false,
-        "kind": "direct"
+        "to": 8,
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 11,
-        "conditional": false,
-        "kind": "direct"
+        "to": 10,
+        "line_type": "dashed"
       },
       {
         "from": 1,
         "to": 32,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 33,
-        "conditional": false,
-        "kind": "direct"
+        "to": 34,
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 22,
-        "conditional": false,
-        "kind": "direct"
+        "to": 35,
+        "line_type": "dashed"
       },
       {
         "from": 1,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "to": 36,
+        "line_type": "dashed"
       },
       {
-        "from": 13,
-        "to": 22,
-        "conditional": true,
-        "kind": "failure cleanup"
+        "from": 1,
+        "to": 37,
+        "line_type": "dashed"
       },
       {
-        "from": 4,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "from": 1,
+        "to": 2,
+        "line_type": "solid"
       },
       {
-        "from": 4,
+        "from": 1,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 1,
+        "to": 38,
+        "line_type": "solid"
+      },
+      {
+        "from": 1,
+        "to": 39,
+        "line_type": "solid"
+      },
+      {
+        "from": 1,
+        "to": 26,
+        "line_type": "solid"
+      },
+      {
+        "from": 1,
         "to": 11,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 4,
-        "to": 12,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 5,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 5,
-        "to": 11,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 6,
-        "to": 14,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 6,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 6,
-        "to": 11,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 7,
-        "to": 14,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 7,
-        "to": 12,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 8,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 8,
-        "to": 12,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 9,
-        "to": 11,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 11,
-        "to": 10,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 3,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 14,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "solid"
       },
       {
         "from": 15,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "to": 26,
+        "line_type": "dashed"
+      },
+      {
+        "from": 5,
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 5,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 5,
+        "to": 14,
+        "line_type": "solid"
+      },
+      {
+        "from": 6,
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 6,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 7,
+        "to": 16,
+        "line_type": "solid"
+      },
+      {
+        "from": 7,
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 7,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 8,
+        "to": 16,
+        "line_type": "solid"
+      },
+      {
+        "from": 8,
+        "to": 14,
+        "line_type": "solid"
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 10,
+        "to": 14,
+        "line_type": "solid"
+      },
+      {
+        "from": 11,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 13,
+        "to": 12,
+        "line_type": "solid"
+      },
+      {
+        "from": 4,
+        "to": 11,
+        "line_type": "solid"
       },
       {
         "from": 16,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "to": 11,
+        "line_type": "solid"
       },
       {
         "from": 17,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 18,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "to": 11,
+        "line_type": "solid"
       },
       {
         "from": 18,
         "to": 11,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 19,
-        "to": 20,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 19,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 19,
-        "to": 11,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "solid"
       },
       {
         "from": 21,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 22,
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 22,
+        "to": 13,
+        "line_type": "solid"
       },
       {
         "from": 23,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "to": 24,
+        "line_type": "solid"
       },
       {
-        "from": 24,
-        "to": 23,
-        "conditional": false,
-        "kind": "direct"
+        "from": 23,
+        "to": 11,
+        "line_type": "solid"
       },
       {
-        "from": 24,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "from": 23,
+        "to": 13,
+        "line_type": "solid"
       },
       {
         "from": 25,
-        "to": 23,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 25,
-        "to": 27,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 25,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 26,
-        "to": 23,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 26,
-        "to": 27,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 26,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 26,
         "to": 11,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "solid"
       },
       {
-        "from": 28,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 28,
+        "from": 27,
         "to": 11,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 29,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
-      },
-      {
-        "from": 29,
-        "to": 11,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "solid"
       },
       {
         "from": 30,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "to": 27,
+        "line_type": "solid"
       },
       {
         "from": 30,
         "to": 11,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "solid"
       },
       {
         "from": 31,
-        "to": 9,
-        "conditional": false,
-        "kind": "direct"
+        "to": 27,
+        "line_type": "solid"
+      },
+      {
+        "from": 31,
+        "to": 33,
+        "line_type": "solid"
       },
       {
         "from": 31,
         "to": 11,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "solid"
+      },
+      {
+        "from": 32,
+        "to": 27,
+        "line_type": "solid"
+      },
+      {
+        "from": 32,
+        "to": 33,
+        "line_type": "solid"
       },
       {
         "from": 32,
         "to": 11,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "solid"
       },
       {
-        "from": 33,
+        "from": 32,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 34,
         "to": 11,
-        "conditional": false,
-        "kind": "direct"
+        "line_type": "solid"
+      },
+      {
+        "from": 34,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 35,
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 35,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 36,
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 36,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 37,
+        "to": 11,
+        "line_type": "solid"
+      },
+      {
+        "from": 37,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 38,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 39,
+        "to": 13,
+        "line_type": "solid"
+      },
+      {
+        "from": 3,
+        "to": 3,
+        "line_type": "recursive"
+      },
+      {
+        "from": 9,
+        "to": 9,
+        "line_type": "conditional_recursive"
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "line_type": "recursive"
+      },
+      {
+        "from": 20,
+        "to": 19,
+        "line_type": "recursive"
+      },
+      {
+        "from": 28,
+        "to": 29,
+        "line_type": "conditional_recursive"
+      },
+      {
+        "from": 29,
+        "to": 28,
+        "line_type": "conditional_recursive"
       }
-    ],
-    "description": "Static function relationships. Dashed amber = call target dispatched through run_step or failure-only cleanup. Ordering is an inferred workflow/declaration presentation, not a runtime trace."
+    ]
   },
   "notes": [
     "github_publish.sh is the normal runtime entry point and sources five implementation modules.",
@@ -603,6 +659,7 @@
     "The project configuration is data, not a sourced Bash module.",
     "run_step invokes function names passed to it by main; the targets are represented as dashed dispatch edges.",
     "Functions with no identified user-defined caller remain in the diagram; this does not prove they are unused.",
-    "Calls into Bash builtins, external commands, and operating-system utilities are excluded from the function-to-function graph."
+    "Calls into Bash builtins, external commands, and operating-system utilities are excluded from the function-to-function graph.",
+    "DEMONSTRATION ONLY: six functions in demo_recursive_examples.sh and their recursive relationships are fictitious examples added to demonstrate the viewer's recursion rendering. They are not part of GHPUtil."
   ]
 }
