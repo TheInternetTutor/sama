@@ -43,9 +43,26 @@
   h1{font-size:var(--heading-font-size);margin:0 0 4px;font-weight:650}
   .subtitle{margin:0 0 15px;color:var(--muted-color)}
   .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:0 0 12px}
-  .toolbar label{color:var(--muted-color);font-size:12px}
-  select{background:#223344;color:var(--text-color);border:1px solid #405568;border-radius:6px;padding:6px 28px 6px 9px;font:inherit}
+  .preset-buttons{display:flex;flex-wrap:wrap;gap:7px}
+  button,input{font:inherit}
+  button{color:var(--text-color);background:#223344;border:1px solid #405568;border-radius:6px;padding:7px 11px;cursor:pointer}
+  button:hover{background:#2c4358}
+  button[aria-pressed="true"]{background:#315b80;border-color:#75b7e8;color:#fff;box-shadow:0 0 0 1px #75b7e855}
+  button:focus-visible,input:focus-visible{outline:2px solid #8ecbff;outline-offset:2px}
   .status{color:var(--muted-color);font-size:11px}
+  .dev-toggle{margin:0 0 12px}
+  .calibration{display:none;margin:0 0 14px;padding:14px;background:#111c26;border:1px solid #34495c;border-radius:9px}
+  .calibration.open{display:block}
+  .calibration h2{font-size:15px;margin:0 0 10px}
+  .calibration-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 18px}
+  .control{display:grid;grid-template-columns:1fr 82px;gap:7px 10px;align-items:center}
+  .control label{font-size:12px;color:var(--legend-color)}
+  .control input[type="range"]{grid-column:1/-1;width:100%;accent-color:#8ecbff}
+  .control input[type="number"]{width:82px;background:#0e161e;color:var(--text-color);border:1px solid #405568;border-radius:5px;padding:5px}
+  .scale-control{padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid #34495c}
+  .calibration-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+  .config-output{width:100%;min-height:125px;margin-top:12px;padding:9px;background:#0b1218;color:#c9d8e6;border:1px solid #34495c;border-radius:6px;font:11px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical}
+  .help{color:var(--muted-color);font-size:11px;margin:8px 0 0}
   .matrix-shell{overflow:auto;max-width:100%;padding:var(--panel-padding);background:var(--panel-background);border-radius:var(--panel-radius);box-shadow:0 4px 18px #0005}
   .matrix{position:relative;width:max-content;min-width:100%}
   table{position:absolute;inset:0;border-collapse:collapse;border-spacing:0;table-layout:fixed}
@@ -74,15 +91,38 @@
 <main>
   <h1>Modular Function Call Matrix</h1>
   <p class="subtitle">Refined layout prototype · 20 functions · 30 illustrative call events</p>
-  <div class="toolbar">
-    <label for="layout">Layout density</label>
-    <select id="layout" aria-label="Layout density">
-      <option value="compact" selected>Compact</option>
-      <option value="loose">Loose</option>
-      <option value="wide">Wide</option>
-    </select>
+  <div class="toolbar" aria-label="Diagram layout presets">
+    <div class="preset-buttons" id="preset-buttons">
+      <button type="button" data-preset="minimal" aria-pressed="false">Minimal</button>
+      <button type="button" data-preset="extraCompact" aria-pressed="false">Extra Compact</button>
+      <button type="button" data-preset="compact" aria-pressed="true">Compact</button>
+      <button type="button" data-preset="loose" aria-pressed="false">Loose</button>
+      <button type="button" data-preset="wide" aria-pressed="false">Wide</button>
+    </div>
     <span class="status" id="dimensions" aria-live="polite"></span>
   </div>
+  <button class="dev-toggle" id="dev-toggle" type="button" aria-expanded="false" aria-controls="calibration">⚙ Developer / Calibration</button>
+  <section class="calibration" id="calibration" aria-label="Developer calibration controls">
+    <h2>Layout calibration</h2>
+    <div class="control scale-control">
+      <label for="density-range">Combined density multiplier</label>
+      <input id="density-number" type="number" min="0.35" max="2.5" step="0.01" value="1">
+      <input id="density-range" type="range" min="0.35" max="2.5" step="0.01" value="1">
+    </div>
+    <div class="calibration-grid" id="dimension-controls">
+      <div class="control"><label for="lane-number">Call column width (px)</label><input id="lane-number" type="number" min="8" max="180" step="0.5"><input id="lane-range" type="range" min="8" max="180" step="0.5"></div>
+      <div class="control"><label for="row-number">Function row height (px)</label><input id="row-number" type="number" min="12" max="180" step="0.5"><input id="row-range" type="range" min="12" max="180" step="0.5"></div>
+      <div class="control"><label for="spacing-number">Panel spacing / padding (px)</label><input id="spacing-number" type="number" min="0" max="80" step="0.5"><input id="spacing-range" type="range" min="0" max="80" step="0.5"></div>
+      <div class="control"><label for="track-number">Function track thickness (px)</label><input id="track-number" type="number" min="1" max="80" step="0.5"><input id="track-range" type="range" min="1" max="80" step="0.5"></div>
+    </div>
+    <div class="calibration-actions">
+      <button type="button" id="copy-current">Copy current configuration</button>
+      <button type="button" id="copy-presets">Copy all five presets</button>
+      <button type="button" id="reset-calibration">Reset to Compact</button>
+    </div>
+    <textarea class="config-output" id="config-output" readonly aria-label="Copyable preset configuration" spellcheck="false"></textarea>
+    <p class="help">The combined multiplier scales all four dimensions together. Individual edits change a dimension's base value; later combined adjustments preserve those relative differences. Selecting a preset restores its exact baseline. The nearest preset remains highlighted during experimentation.</p>
+  </section>
   <section class="matrix-shell" aria-label="Function call matrix; scroll horizontally when needed">
     <div class="matrix" id="matrix">
       <table id="function-table" aria-label="Function rows and call-event columns"><colgroup id="columns"></colgroup><tbody id="rows"></tbody></table>
@@ -117,11 +157,17 @@ const calls = [
   [18,19,0],[3,7,0],[3,12,1],[6,6,0],[0,19,1]
 ].map(([from,to,conditional])=>({from,to,conditional:Boolean(conditional)}));
 
+// Preset values are calibration starting points. Existing Compact, Loose, and Wide
+// geometry is preserved exactly; the two denser presets are new starting estimates.
 const presets = {
-  compact:{name:132,lane:36,row:42,track:25},
-  loose:{name:150,lane:52,row:54,track:30},
-  wide:{name:170,lane:68,row:66,track:34}
+  minimal:{name:132,lane:24,row:30,spacing:10,track:16},
+  extraCompact:{name:132,lane:30,row:36,spacing:13,track:20},
+  compact:{name:132,lane:36,row:42,spacing:16,track:25},
+  loose:{name:150,lane:52,row:54,spacing:16,track:30},
+  wide:{name:170,lane:68,row:66,spacing:16,track:34}
 };
+const presetLabels={minimal:'Minimal',extraCompact:'Extra Compact',compact:'Compact',loose:'Loose',wide:'Wide'};
+const state={preset:'compact',density:1,base:{lane:36,row:42,spacing:16,track:25}};
 const NS="http://www.w3.org/2000/svg";
 const matrix=document.getElementById('matrix');
 const table=document.getElementById('function-table');
@@ -131,12 +177,45 @@ const svg=document.getElementById('overlay');
 const dimensions=document.getElementById('dimensions');
 
 function svgEl(tag,attrs,parent=svg){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);parent.appendChild(el);return el;}
+function effective(){return Object.fromEntries(Object.entries(state.base).map(([k,v])=>[k,v*state.density]));}
+function syncControls(){
+  const e=effective();
+  document.getElementById('density-range').value=state.density;
+  document.getElementById('density-number').value=state.density.toFixed(2);
+  for(const k of ['lane','row','spacing','track']){
+    document.getElementById(k+'-range').value=e[k];
+    document.getElementById(k+'-number').value=Number(e[k].toFixed(2));
+  }
+  document.querySelectorAll('[data-preset]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.preset===state.preset)));
+  updateConfigOutput();
+}
+function nearestPreset(){
+  const e=effective();let best='compact',bestScore=Infinity;
+  for(const [name,p] of Object.entries(presets)){
+    const score=['lane','row','spacing','track'].reduce((sum,k)=>sum+Math.pow((e[k]-p[k])/Math.max(p[k],1),2),0);
+    if(score<bestScore){best=name;bestScore=score;}
+  }
+  state.preset=best;
+}
+function configObject(name,base,density=1){
+  const effective=Object.fromEntries(Object.entries(base).map(([k,v])=>[k,Number((v*density).toFixed(2))]));
+  return {preset:name,label:presetLabels[name],density:Number(density.toFixed(2)),dimensions:{callColumnWidth:effective.lane,functionRowHeight:effective.row,panelSpacing:effective.spacing,functionTrackThickness:effective.track}};
+}
+function updateConfigOutput(){
+  const all=Object.fromEntries(Object.entries(presets).map(([name,p])=>[name,configObject(name,{lane:p.lane,row:p.row,spacing:p.spacing,track:p.track})]));
+  document.getElementById('config-output').value=JSON.stringify({selectedPreset:state.preset,current:configObject(state.preset,state.base,state.density),presets:all},null,2);
+}
 function render(){
-  const p=presets[document.getElementById('layout').value];
+  const e=effective();
+  const p={name:presets[state.preset].name,lane:e.lane,row:e.row,spacing:e.spacing,track:e.track};
+  document.documentElement.style.setProperty('--panel-padding',p.spacing+'px');
+  document.documentElement.style.setProperty('--track-thickness',p.track+'px');
   const W=p.name+calls.length*p.lane;
   const H=functionsList.length*p.row;
   matrix.style.width=W+'px';matrix.style.height=H+'px';
   table.style.width=W+'px';table.style.height=H+'px';
+  document.documentElement.style.setProperty('--lane-column-width',p.lane+'px');
+  document.documentElement.style.setProperty('--function-row-height',p.row+'px');
   columns.replaceChildren();
   const nameCol=document.createElement('col');nameCol.className='name';columns.appendChild(nameCol);
   for(let i=0;i<calls.length;i++){const c=document.createElement('col');c.className='event';columns.appendChild(c);}
@@ -162,16 +241,39 @@ function render(){
       svgEl('path',{d,class:cls,'marker-end':markerEnd});
       svgEl('circle',{cx:x-r,cy:y1,r:2.5,class:call.conditional?'conditional-dot':'source-dot'});
     }else{
-      const top=Math.min(y1,y2),bottom=Math.max(y1,y2);
-      // A dedicated vertical event column is the no-crossing routing rule.
       svgEl('path',{d:`M${x} ${y1} V${y2}`,class:cls,'marker-end':markerEnd});
       svgEl('circle',{cx:x,cy:y1,r:2.5,class:call.conditional?'conditional-dot':'source-dot'});
     }
   });
-  dimensions.textContent=`${functionsList.length} function rows · ${calls.length} call columns · ${W} × ${H} px`;
+  dimensions.textContent=`${presetLabels[state.preset]} · ${functionsList.length} functions · ${calls.length} calls · ${W} × ${H} px`;
+  syncControls();
 }
-document.getElementById('layout').addEventListener('change',render);
-render();
+function selectPreset(name){state.preset=name;state.density=1;const p=presets[name];state.base={lane:p.lane,row:p.row,spacing:p.spacing,track:p.track};render();}
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>selectPreset(b.dataset.preset)));
+document.getElementById('dev-toggle').addEventListener('click',()=>{
+  const panel=document.getElementById('calibration');const open=panel.classList.toggle('open');
+  document.getElementById('dev-toggle').setAttribute('aria-expanded',String(open));
+});
+function changeDensity(value){const v=Number(value);if(!Number.isFinite(v)||v<0.35||v>2.5)return;state.density=v;nearestPreset();render();}
+document.getElementById('density-range').addEventListener('input',e=>changeDensity(e.target.value));
+document.getElementById('density-number').addEventListener('change',e=>{changeDensity(e.target.value);syncControls();});
+for(const k of ['lane','row','spacing','track']){
+  const update=value=>{const v=Number(value);if(!Number.isFinite(v))return;const input=document.getElementById(k+'-number');const min=Number(input.min),max=Number(input.max);if(v<min||v>max)return;state.base[k]=v/state.density;nearestPreset();render();};
+  document.getElementById(k+'-range').addEventListener('input',e=>update(e.target.value));
+  document.getElementById(k+'-number').addEventListener('change',e=>{update(e.target.value);syncControls();});
+}
+async function copyText(text){
+  try{await navigator.clipboard.writeText(text);dimensions.textContent='Configuration copied to clipboard';}
+  catch{const out=document.getElementById('config-output');out.focus();out.select();dimensions.textContent='Clipboard unavailable; configuration selected for copying';}
+}
+document.getElementById('copy-current').addEventListener('click',()=>copyText(JSON.stringify(configObject(state.preset,state.base,state.density),null,2)));
+document.getElementById('copy-presets').addEventListener('click',()=>{
+  const all=Object.fromEntries(Object.entries(presets).map(([name,p])=>[name,configObject(name,{lane:p.lane,row:p.row,spacing:p.spacing,track:p.track})]));
+  copyText(JSON.stringify(all,null,2));
+});
+document.getElementById('reset-calibration').addEventListener('click',()=>selectPreset('compact'));
+selectPreset('compact');
+
 </script>
 </body>
 </html>
