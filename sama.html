@@ -405,7 +405,8 @@ let calibrationWindow=null;
 function broadcastCalibrationState(){
   if(!calibrationWindow||calibrationWindow.closed)return;
   const payload={type:'calibration-state',values:{...effective()},density:state.density,status:document.getElementById('endpoint-status').textContent,css:document.getElementById('config-output').value,minSaved:Boolean(endpoints.minimal),wideSaved:Boolean(endpoints.wide)};
-  calibrationWindow.postMessage(payload,'*');
+  if(typeof calibrationWindow.__receiveCalibrationState==='function')calibrationWindow.__receiveCalibrationState(payload);
+  else calibrationWindow.postMessage(payload,'*');
 }
 function openCalibrationWindow(){
   if(calibrationWindow&&!calibrationWindow.closed){calibrationWindow.focus();return;}
@@ -417,9 +418,34 @@ function openCalibrationWindow(){
   calibrationWindow.document.open();
   calibrationWindow.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Developer Calibration — GHPUtil</title><style>${css}body{padding:16px}main{max-width:none}.calibration{display:block!important}.calibration-grid{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:600px){.calibration-grid{grid-template-columns:1fr}}h1{margin:0 0 12px}</style></head><body><main><h1>Developer / Calibration</h1><p class="status">Adjust controls here; the main diagram updates live in its own window.</p>${panel.outerHTML}</main></body></html>`);
   calibrationWindow.document.close();
+  calibrationWindow.__receiveCalibrationState=function(d){
+    for(const [k,v] of Object.entries(d.values||{})){
+      const prefix=k+'-';
+      for(const suffix of ['range','number']){
+        const el=calibrationWindow.document.getElementById(prefix+suffix);
+        if(el){if(k==='ringRadius')el.min=d.values.recDot;el.value=v;}
+      }
+    }
+    const densityRange=calibrationWindow.document.getElementById('density-range');
+    const densityNumber=calibrationWindow.document.getElementById('density-number');
+    if(densityRange)densityRange.value=d.density;
+    if(densityNumber)densityNumber.value=Number(d.density).toFixed(2);
+    const status=calibrationWindow.document.getElementById('endpoint-status');
+    if(status)status.textContent=d.status;
+    const output=calibrationWindow.document.getElementById('config-output');
+    if(output)output.value=d.css;
+    for(const [id,saved] of [['save-minimal',d.minSaved],['save-wide',d.wideSaved]]){
+      const b=calibrationWindow.document.getElementById(id);
+      if(b){b.classList.toggle('saved',saved);b.textContent=saved?(id==='save-minimal'?'Minimal endpoint saved':'Wide endpoint saved'):(id==='save-minimal'?'Save Minimal endpoint':'Save Wide endpoint');}
+    }
+  };
   calibrationWindow.document.querySelectorAll('#calibration input').forEach(el=>{
     const eventName=el.type==='range'?'input':'change';
-    el.addEventListener(eventName,()=>window.opener.postMessage({type:'calibration-control',id:el.id,value:el.value,eventName},'*'));
+    el.addEventListener(eventName,()=>{
+      const message={type:'calibration-control',id:el.id,value:el.value,eventName};
+      if(window.opener&&typeof window.opener.__handleCalibrationMessage==='function')window.opener.__handleCalibrationMessage(message);
+      else if(window.opener)window.opener.postMessage(message,'*');
+    });
   });
   calibrationWindow.document.querySelectorAll('#calibration button').forEach(el=>el.addEventListener('click',async()=>{
     if(el.id==='copy-css'){
@@ -430,22 +456,27 @@ function openCalibrationWindow(){
       catch{output.focus();output.select();status.textContent='Clipboard unavailable; CSS block selected. Press Ctrl+C to copy.';}
       return;
     }
-    window.opener.postMessage({type:'calibration-action',id:el.id},'*');
+    const message={type:'calibration-action',id:el.id};
+    if(window.opener&&typeof window.opener.__handleCalibrationMessage==='function')window.opener.__handleCalibrationMessage(message);
+    else if(window.opener)window.opener.postMessage(message,'*');
   }));
-  calibrationWindow.addEventListener('message',event=>{const d=event.data||{};if(d.type!=='calibration-state')return;for(const [k,v] of Object.entries(d.values||{})){const id=k+'-';for(const suffix of ['range','number']){const el=calibrationWindow.document.getElementById(id+suffix);if(el){if(k==='ringRadius')el.min=d.values.recDot;el.value=v;}}}const densityRange=calibrationWindow.document.getElementById('density-range');const densityNumber=calibrationWindow.document.getElementById('density-number');if(densityRange)densityRange.value=d.density;if(densityNumber)densityNumber.value=Number(d.density).toFixed(2);const status=calibrationWindow.document.getElementById('endpoint-status');if(status)status.textContent=d.status;const output=calibrationWindow.document.getElementById('config-output');if(output)output.value=d.css;for(const [id,saved] of [['save-minimal',d.minSaved],['save-wide',d.wideSaved]]){const b=calibrationWindow.document.getElementById(id);if(b){b.classList.toggle('saved',saved);b.textContent=saved?(id==='save-minimal'?'Minimal endpoint saved':'Wide endpoint saved'):(id==='save-minimal'?'Save Minimal endpoint':'Save Wide endpoint');}}} );
+  calibrationWindow.addEventListener('message',event=>{const d=event.data||{};if(d.type==='calibration-state')calibrationWindow.__receiveCalibrationState(d);});
   calibrationWindow.addEventListener('beforeunload',()=>{calibrationWindow=null;});
   broadcastCalibrationState();
 }
 document.getElementById('dev-toggle').addEventListener('click',openCalibrationWindow);
-window.addEventListener('message',event=>{
-  if(!calibrationWindow||event.source!==calibrationWindow)return;
-  const data=event.data||{};
+window.__handleCalibrationMessage=function(data){
+  if(!calibrationWindow||calibrationWindow.closed)return;
   if(data.type==='calibration-control'){
     const target=document.getElementById(data.id);if(!target)return;
     target.value=data.value;target.dispatchEvent(new Event(data.eventName,{bubbles:true}));
   }else if(data.type==='calibration-action'){
     const target=document.getElementById(data.id);if(target)target.click();
   }
+};
+window.addEventListener('message',event=>{
+  if(!calibrationWindow||event.source!==calibrationWindow)return;
+  window.__handleCalibrationMessage(event.data||{});
 });
 function changeDensity(value){const v=Number(value);if(!Number.isFinite(v)||v<0.35||v>2.5)return;state.density=v;nearestPreset();render();}
 document.getElementById('density-range').addEventListener('input',e=>changeDensity(e.target.value));
