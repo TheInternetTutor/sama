@@ -45,20 +45,25 @@
   :root {
     --call-thickness:2.2px;
     --recursive-ring-thickness:1px;
+    --recursive-ring-radius:5px;
     --recursive-dot-radius:1.45px;
     --arrowhead-size:7px;
     --source-dot-radius:2.5px;
-    --density-sensitivity-call:1; --density-sensitivity-ring:1; --density-sensitivity-rec-dot:1; --density-sensitivity-arrow:1; --density-sensitivity-source-dot:1;
     --preset-minimal-lane:15px; --preset-minimal-row:20px; --preset-minimal-spacing:5px; --preset-minimal-track:15px;
     --preset-minimal-call:1.6px; --preset-minimal-ring:0.8px; --preset-minimal-rec-dot:1.2px; --preset-minimal-arrow:5px; --preset-minimal-source-dot:2px;
+    --preset-minimal-ring-radius:4px;
     --preset-extraCompact-lane:23.75px; --preset-extraCompact-row:21.25px; --preset-extraCompact-spacing:6.25px; --preset-extraCompact-track:16.25px;
     --preset-extraCompact-call:1.9px; --preset-extraCompact-ring:0.9px; --preset-extraCompact-rec-dot:1.3px; --preset-extraCompact-arrow:6px; --preset-extraCompact-source-dot:2.25px;
+    --preset-extraCompact-ring-radius:4.5px;
     --preset-compact-lane:32.5px; --preset-compact-row:22.5px; --preset-compact-spacing:7.5px; --preset-compact-track:17.5px;
     --preset-compact-call:2.2px; --preset-compact-ring:1px; --preset-compact-rec-dot:1.45px; --preset-compact-arrow:7px; --preset-compact-source-dot:2.5px;
+    --preset-compact-ring-radius:5px;
     --preset-loose-lane:41.25px; --preset-loose-row:23.75px; --preset-loose-spacing:8.75px; --preset-loose-track:18.75px;
     --preset-loose-call:2.5px; --preset-loose-ring:1.1px; --preset-loose-rec-dot:1.6px; --preset-loose-arrow:8px; --preset-loose-source-dot:2.75px;
+    --preset-loose-ring-radius:5.5px;
     --preset-wide-lane:50px; --preset-wide-row:25px; --preset-wide-spacing:10px; --preset-wide-track:20px;
     --preset-wide-call:2.8px; --preset-wide-ring:1.2px; --preset-wide-rec-dot:1.75px; --preset-wide-arrow:9px; --preset-wide-source-dot:3px;
+    --preset-wide-ring-radius:6px;
   }
   *{box-sizing:border-box}
   body{margin:0;padding:var(--page-padding);color:var(--text-color);background:var(--page-background);font:var(--base-font-size)/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -78,7 +83,10 @@
   .calibration{display:none;margin:0 0 14px;padding:14px;background:#111c26;border:1px solid #34495c;border-radius:9px}
   .calibration.open{display:block}
   .calibration h2{font-size:15px;margin:0 0 10px}.calibration h3{font-size:12px;color:var(--legend-color);margin:14px 0 8px}
-  .calibration-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 18px}
+  .calibration-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}
+  @media(max-width:520px){.calibration-grid{grid-template-columns:1fr}}
+  .calibration-actions button.saved{background:#285d54;border-color:#4d9d8e;color:#eafff8}
+  .calibration-actions button.saved::before{content:"✓ ";font-weight:700}
   .control{display:grid;grid-template-columns:1fr 82px;gap:7px 10px;align-items:center}
   .control label{font-size:12px;color:var(--legend-color)}
   .control input[type="range"]{grid-column:1/-1;width:100%;accent-color:#8ecbff}
@@ -160,7 +168,7 @@
     </div>
     <p class="notes" id="diagram-notes"></p>
   </section>
-  <button class="dev-toggle" id="dev-toggle" type="button" aria-expanded="false" aria-controls="calibration">⚙ Developer / Calibration</button>
+  <button class="dev-toggle" id="dev-toggle" type="button" aria-expanded="false" aria-controls="calibration">⚙ Open Developer / Calibration Window</button>
   <section class="calibration" id="calibration" aria-label="Developer calibration controls">
     <h2>Layout and visual calibration</h2>
     <div class="control scale-control">
@@ -179,18 +187,10 @@
     <div class="calibration-grid" id="visual-controls">
       <div class="control"><label for="call-number">Connector thickness (px)</label><input id="call-number" type="number" min="0.5" max="12" step="0.1"><input id="call-range" type="range" min="0.5" max="12" step="0.1"></div>
       <div class="control"><label for="ring-number">Recursive ring thickness (px)</label><input id="ring-number" type="number" min="0.25" max="6" step="0.05"><input id="ring-range" type="range" min="0.25" max="6" step="0.05"></div>
+      <div class="control"><label for="ringRadius-number">Recursive ring radius (px)</label><input id="ringRadius-number" type="number" min="1.45" max="24" step="0.1"><input id="ringRadius-range" type="range" min="1.45" max="24" step="0.1"></div>
       <div class="control"><label for="recDot-number">Recursive center-dot radius (px)</label><input id="recDot-number" type="number" min="0.5" max="8" step="0.05"><input id="recDot-range" type="range" min="0.5" max="8" step="0.05"></div>
       <div class="control"><label for="arrow-number">Arrowhead size (px)</label><input id="arrow-number" type="number" min="3" max="20" step="0.5"><input id="arrow-range" type="range" min="3" max="20" step="0.5"></div>
       <div class="control"><label for="sourceDot-number">Ordinary call-origin dot radius (px)</label><input id="sourceDot-number" type="number" min="0.5" max="8" step="0.1"><input id="sourceDot-range" type="range" min="0.5" max="8" step="0.1"></div>
-    </div>
-    <h3>Density sensitivity for visual elements</h3>
-    <p class="help">A sensitivity of 1 scales proportionally with density; 0 keeps the element unchanged; values between 0 and 1 scale more gently.</p>
-    <div class="calibration-grid" id="sensitivity-controls">
-      <div class="control"><label for="call-sensitivity">Connector sensitivity</label><input id="call-sensitivity" type="number" min="0" max="2" step="0.05" value="1"></div>
-      <div class="control"><label for="ring-sensitivity">Ring sensitivity</label><input id="ring-sensitivity" type="number" min="0" max="2" step="0.05" value="1"></div>
-      <div class="control"><label for="recDot-sensitivity">Recursive dot sensitivity</label><input id="recDot-sensitivity" type="number" min="0" max="2" step="0.05" value="1"></div>
-      <div class="control"><label for="arrow-sensitivity">Arrowhead sensitivity</label><input id="arrow-sensitivity" type="number" min="0" max="2" step="0.05" value="1"></div>
-      <div class="control"><label for="sourceDot-sensitivity">Ordinary dot sensitivity</label><input id="sourceDot-sensitivity" type="number" min="0" max="2" step="0.05" value="1"></div>
     </div>
     <div class="calibration-actions">
       <button type="button" id="save-minimal">Save Minimal endpoint</button>
@@ -201,7 +201,7 @@
     </div>
     <p class="status" id="endpoint-status" aria-live="polite">Minimal and Wide endpoints have not yet been customized.</p>
     <textarea class="config-output" id="config-output" readonly aria-label="Generated replaceable CSS block" spellcheck="false"></textarea>
-    <p class="help">Tune the controls, save the Minimal and Wide endpoint values, then generate the five linearly interpolated presets. Copy the complete commented CSS block and replace the existing calibrated visual-parameters block. Density scales layout dimensions directly and scales each visual parameter according to its own sensitivity.</p>
+    <p class="help">Tune the controls, save the Minimal and Wide endpoint values, then generate the five linearly interpolated presets. Copy the complete commented CSS block and replace the existing calibrated visual-parameters block. Density scales all layout and visual parameters proportionally. The recursive ring radius cannot be smaller than the recursive center-dot radius.</p>
   </section>
 </main>
 <script>
@@ -215,7 +215,7 @@ function readPresetCss(){
   const keys=['minimal','extraCompact','compact','loose','wide'];
   const values={};
   for(const key of keys){
-    const p={lane:read(`--preset-${key}-lane`),row:read(`--preset-${key}-row`),spacing:read(`--preset-${key}-spacing`),track:read(`--preset-${key}-track`),call:read(`--preset-${key}-call`),ring:read(`--preset-${key}-ring`),recDot:read(`--preset-${key}-rec-dot`),arrow:read(`--preset-${key}-arrow`),sourceDot:read(`--preset-${key}-source-dot`)};
+    const p={lane:read(`--preset-${key}-lane`),row:read(`--preset-${key}-row`),spacing:read(`--preset-${key}-spacing`),track:read(`--preset-${key}-track`),call:read(`--preset-${key}-call`),ring:read(`--preset-${key}-ring`),ringRadius:read(`--preset-${key}-ring-radius`),recDot:read(`--preset-${key}-rec-dot`),arrow:read(`--preset-${key}-arrow`),sourceDot:read(`--preset-${key}-source-dot`)};
     values[key]=p;
   }
   return values;
@@ -223,10 +223,8 @@ function readPresetCss(){
 const presets=readPresetCss();
 const presetLabels={minimal:'Minimal',extraCompact:'Extra Compact',compact:'Compact',loose:'Loose',wide:'Wide'};
 const viewDefaults={module:'loose',function:'minimal'};
-const visualKeys=['call','ring','recDot','arrow','sourceDot'];
-const cssRoot=getComputedStyle(document.documentElement);
-const sensitivity={call:parseFloat(cssRoot.getPropertyValue('--density-sensitivity-call'))||1,ring:parseFloat(cssRoot.getPropertyValue('--density-sensitivity-ring'))||1,recDot:parseFloat(cssRoot.getPropertyValue('--density-sensitivity-rec-dot'))||1,arrow:parseFloat(cssRoot.getPropertyValue('--density-sensitivity-arrow'))||1,sourceDot:parseFloat(cssRoot.getPropertyValue('--density-sensitivity-source-dot'))||1};
-const state={preset:'loose',density:1,base:{lane:41.25,row:23.75,spacing:8.75,track:18.75,call:2.5,ring:1.1,recDot:1.6,arrow:8,sourceDot:2.75}};
+const visualKeys=['call','ring','ringRadius','recDot','arrow','sourceDot'];
+const state={preset:'loose',density:1,base:{lane:41.25,row:23.75,spacing:8.75,track:18.75,call:2.5,ring:1.1,ringRadius:5.5,recDot:1.6,arrow:8,sourceDot:2.75}};
 let endpoints={minimal:null,wide:null};
 const NS="http://www.w3.org/2000/svg";
 const matrix=document.getElementById('matrix');
@@ -251,49 +249,47 @@ function validateData(data){
   if(data.module.rows.some(row=>typeof row!=='string'))throw new Error('Each module row must be a string.');
 }
 function setLoadStatus(message,isError=false){loadStatus.textContent=message;loadStatus.style.color=isError?'#ff9b9b':'var(--muted-color)';}
-function effective(){const out={};for(const [k,v] of Object.entries(state.base))out[k]=v*(visualKeys.includes(k)?Math.pow(state.density,sensitivity[k]):state.density);return out;}
+function effective(){const out={};for(const [k,v] of Object.entries(state.base))out[k]=v*state.density;return out;}
 function syncControls(){
   const e=effective();
   document.getElementById('density-range').value=state.density;
   document.getElementById('density-number').value=state.density.toFixed(2);
-  const keys=['lane','row','spacing','track','call','ring','recDot','arrow','sourceDot'];
+  const keys=['lane','row','spacing','track','call','ring','ringRadius','recDot','arrow','sourceDot'];
   for(const k of keys){
     document.getElementById(k+'-range').value=e[k];
     document.getElementById(k+'-number').value=Number(e[k].toFixed(2));
   }
-  for(const k of visualKeys)document.getElementById(k+'-sensitivity').value=sensitivity[k];
+  const ringMin=e.recDot;
+  for(const suffix of ['range','number']){const el=document.getElementById('ringRadius-'+suffix);el.min=ringMin;if(Number(el.value)<ringMin)el.value=ringMin;}
+  document.getElementById('save-minimal').classList.toggle('saved',Boolean(endpoints.minimal));
+  document.getElementById('save-wide').classList.toggle('saved',Boolean(endpoints.wide));
+  document.getElementById('save-minimal').textContent=endpoints.minimal?'Minimal endpoint saved':'Save Minimal endpoint';
+  document.getElementById('save-wide').textContent=endpoints.wide?'Wide endpoint saved':'Save Wide endpoint';
+  broadcastCalibrationState();
   document.querySelectorAll('[data-preset]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.preset===state.preset)));
 }
 function nearestPreset(){
   const e=effective();let best='compact',bestScore=Infinity;
   for(const [name,p] of Object.entries(presets)){
-    const score=['lane','row','spacing','track','call','ring','recDot','arrow','sourceDot'].reduce((sum,k)=>sum+Math.pow((e[k]-p[k])/Math.max(p[k],0.5),2),0);
+    const score=['lane','row','spacing','track','call','ring','ringRadius','recDot','arrow','sourceDot'].reduce((sum,k)=>sum+Math.pow((e[k]-p[k])/Math.max(p[k],0.5),2),0);
     if(score<bestScore){best=name;bestScore=score;}
   }
   state.preset=best;
 }
 function snapshotEndpoint(){
-  const values={...state.base};
-  for(const k of visualKeys)values[k]=effective()[k]/Math.pow(state.density,sensitivity[k]);
-  return values;
+  return effective();
 }
-function saveEndpoint(which){endpoints[which]=snapshotEndpoint();document.getElementById('endpoint-status').textContent=`${presetLabels[which]} endpoint saved from current calibration values.`;}
+function saveEndpoint(which){endpoints[which]=snapshotEndpoint();document.getElementById('endpoint-status').textContent=`${presetLabels[which]} endpoint saved from current calibration values.`;broadcastCalibrationState();}
 function interpolate(a,b,t){const out={};for(const k of Object.keys(a))out[k]=Number((a[k]+(b[k]-a[k])*t).toFixed(3));return out;}
 function cssBlock(){
   if(!endpoints.minimal||!endpoints.wide)throw new Error('Save both Minimal and Wide endpoints before generating CSS.');
   const names=['minimal','extraCompact','compact','loose','wide'];
   const lines=['/* ============================================================','   CALIBRATED VISUAL PARAMETERS — DEVELOPER CALIBRATION UTILITY','   Generated from saved Minimal and Wide endpoint values.','   Contains all five linearly interpolated presets.','   Replace the existing calibrated visual-parameters block','   with this entire section. Do not edit surrounding code.','   ============================================================ */',':root {'];
-  const props={lane:'lane',row:'row',spacing:'spacing',track:'track',call:'call',ring:'ring',recDot:'rec-dot',arrow:'arrow',sourceDot:'source-dot'};
+  const props={lane:'lane',row:'row',spacing:'spacing',track:'track',call:'call',ring:'ring',ringRadius:'ring-radius',recDot:'rec-dot',arrow:'arrow',sourceDot:'source-dot'};
   names.forEach((name,i)=>{const v=interpolate(endpoints.minimal,endpoints.wide,i/4);lines.push(`  /* ${presetLabels[name]} */`);for(const [key,css] of Object.entries(props))lines.push(`  --preset-${name}-${css}:${v[key]}px;`);});
   const compact=interpolate(endpoints.minimal,endpoints.wide,2/4);
   lines.push('  /* Current viewer defaults; runtime controls may override these. */');
-  for(const [key,css] of Object.entries(props))lines.push(`  --${key==='lane'?'lane-column-width':key==='row'?'function-row-height':key==='spacing'?'panel-padding':key==='track'?'track-thickness':key==='call'?'call-thickness':key==='ring'?'recursive-ring-thickness':key==='recDot'?'recursive-dot-radius':key==='arrow'?'arrowhead-size':'source-dot-radius'}:${compact[key]}px;`);
-  lines.push('  /* Density sensitivity: 0 = fixed; 1 = proportional. */');
-  lines.push(`  --density-sensitivity-call:${sensitivity.call};`);
-  lines.push(`  --density-sensitivity-ring:${sensitivity.ring};`);
-  lines.push(`  --density-sensitivity-rec-dot:${sensitivity.recDot};`);
-  lines.push(`  --density-sensitivity-arrow:${sensitivity.arrow};`);
-  lines.push(`  --density-sensitivity-source-dot:${sensitivity.sourceDot};`);
+  for(const [key,css] of Object.entries(props))lines.push(`  --${key==='lane'?'lane-column-width':key==='row'?'function-row-height':key==='spacing'?'panel-padding':key==='track'?'track-thickness':key==='call'?'call-thickness':key==='ring'?'recursive-ring-thickness':key==='ringRadius'?'recursive-ring-radius':key==='recDot'?'recursive-dot-radius':key==='arrow'?'arrowhead-size':'source-dot-radius'}:${compact[key]}px;`);
   lines.push('}');return lines.join('\n');
 }
 function rowLabel(row){return activeView==='function'?row.name.replace(/\(\)$/,''):row;}
@@ -313,6 +309,7 @@ function render(){
   document.documentElement.style.setProperty('--track-thickness',p.track+'px');
   document.documentElement.style.setProperty('--call-thickness',e.call+'px');
   document.documentElement.style.setProperty('--recursive-ring-thickness',e.ring+'px');
+  document.documentElement.style.setProperty('--recursive-ring-radius',Math.max(e.ringRadius,e.recDot)+'px');
   document.documentElement.style.setProperty('--recursive-dot-radius',e.recDot+'px');
   document.documentElement.style.setProperty('--source-dot-radius',e.sourceDot+'px');
   const W=p.name+calls.length*p.lane;
@@ -342,7 +339,7 @@ function render(){
     const recursive=call.line_type==='recursive'||call.line_type==='conditional_recursive';
     const conditional=call.line_type==='dashed'||call.line_type==='conditional_recursive';
     if(recursive){
-      const ringRadius=Math.min(8.5,p.row*.34,p.lane*.22);
+      const ringRadius=Math.max(e.ringRadius,e.recDot);
       if(call.from!==call.to){
         const cls=conditional?'recursive-conditional-path':'recursive-path';
         const markerEnd=conditional?'url(#arrow-rc)':'url(#arrow-r)';
@@ -404,24 +401,65 @@ document.getElementById('analysis-file').addEventListener('change',async event=>
 document.getElementById('module-view').addEventListener('click',()=>selectView('module'));
 document.getElementById('function-view').addEventListener('click',()=>selectView('function'));
 document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>selectPreset(b.dataset.preset)));
-document.getElementById('dev-toggle').addEventListener('click',()=>{
-  const panel=document.getElementById('calibration');const open=panel.classList.toggle('open');
-  document.getElementById('dev-toggle').setAttribute('aria-expanded',String(open));
+let calibrationWindow=null;
+function broadcastCalibrationState(){
+  if(!calibrationWindow||calibrationWindow.closed)return;
+  const payload={type:'calibration-state',values:{...effective()},density:state.density,status:document.getElementById('endpoint-status').textContent,css:document.getElementById('config-output').value,minSaved:Boolean(endpoints.minimal),wideSaved:Boolean(endpoints.wide)};
+  calibrationWindow.postMessage(payload,'*');
+}
+function openCalibrationWindow(){
+  if(calibrationWindow&&!calibrationWindow.closed){calibrationWindow.focus();return;}
+  calibrationWindow=window.open('','ghputilCalibration','popup=yes,width=920,height=900,resizable=yes,scrollbars=yes');
+  if(!calibrationWindow){setLoadStatus('The calibration window was blocked. Allow pop-ups for this page, then try again.',true);return;}
+  const css=[...document.querySelectorAll('style')].map(x=>x.textContent).join('\n');
+  const panel=document.getElementById('calibration').cloneNode(true);
+  panel.classList.add('open');panel.style.display='block';panel.style.margin='0';
+  calibrationWindow.document.open();
+  calibrationWindow.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Developer Calibration — GHPUtil</title><style>${css}body{padding:16px}main{max-width:none}.calibration{display:block!important}.calibration-grid{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:600px){.calibration-grid{grid-template-columns:1fr}}h1{margin:0 0 12px}</style></head><body><main><h1>Developer / Calibration</h1><p class="status">Adjust controls here; the main diagram updates live in its own window.</p>${panel.outerHTML}</main></body></html>`);
+  calibrationWindow.document.close();
+  calibrationWindow.document.querySelectorAll('#calibration input').forEach(el=>{
+    const eventName=el.type==='range'?'input':'change';
+    el.addEventListener(eventName,()=>window.opener.postMessage({type:'calibration-control',id:el.id,value:el.value,eventName},'*'));
+  });
+  calibrationWindow.document.querySelectorAll('#calibration button').forEach(el=>el.addEventListener('click',async()=>{
+    if(el.id==='copy-css'){
+      const output=calibrationWindow.document.getElementById('config-output');
+      const status=calibrationWindow.document.getElementById('endpoint-status');
+      if(!output.value){status.textContent='Generate the CSS block before copying.';return;}
+      try{await calibrationWindow.navigator.clipboard.writeText(output.value);status.textContent='Complete CSS block copied to clipboard.';}
+      catch{output.focus();output.select();status.textContent='Clipboard unavailable; CSS block selected. Press Ctrl+C to copy.';}
+      return;
+    }
+    window.opener.postMessage({type:'calibration-action',id:el.id},'*');
+  }));
+  calibrationWindow.addEventListener('message',event=>{const d=event.data||{};if(d.type!=='calibration-state')return;for(const [k,v] of Object.entries(d.values||{})){const id=k+'-';for(const suffix of ['range','number']){const el=calibrationWindow.document.getElementById(id+suffix);if(el){if(k==='ringRadius')el.min=d.values.recDot;el.value=v;}}}const densityRange=calibrationWindow.document.getElementById('density-range');const densityNumber=calibrationWindow.document.getElementById('density-number');if(densityRange)densityRange.value=d.density;if(densityNumber)densityNumber.value=Number(d.density).toFixed(2);const status=calibrationWindow.document.getElementById('endpoint-status');if(status)status.textContent=d.status;const output=calibrationWindow.document.getElementById('config-output');if(output)output.value=d.css;for(const [id,saved] of [['save-minimal',d.minSaved],['save-wide',d.wideSaved]]){const b=calibrationWindow.document.getElementById(id);if(b){b.classList.toggle('saved',saved);b.textContent=saved?(id==='save-minimal'?'Minimal endpoint saved':'Wide endpoint saved'):(id==='save-minimal'?'Save Minimal endpoint':'Save Wide endpoint');}}} );
+  calibrationWindow.addEventListener('beforeunload',()=>{calibrationWindow=null;});
+  broadcastCalibrationState();
+}
+document.getElementById('dev-toggle').addEventListener('click',openCalibrationWindow);
+window.addEventListener('message',event=>{
+  if(!calibrationWindow||event.source!==calibrationWindow)return;
+  const data=event.data||{};
+  if(data.type==='calibration-control'){
+    const target=document.getElementById(data.id);if(!target)return;
+    target.value=data.value;target.dispatchEvent(new Event(data.eventName,{bubbles:true}));
+  }else if(data.type==='calibration-action'){
+    const target=document.getElementById(data.id);if(target)target.click();
+  }
 });
 function changeDensity(value){const v=Number(value);if(!Number.isFinite(v)||v<0.35||v>2.5)return;state.density=v;nearestPreset();render();}
 document.getElementById('density-range').addEventListener('input',e=>changeDensity(e.target.value));
 document.getElementById('density-number').addEventListener('change',e=>{changeDensity(e.target.value);syncControls();});
-const controlLimits={lane:[8,180],row:[12,180],spacing:[0,80],track:[1,80],call:[0.5,12],ring:[0.25,6],recDot:[0.5,8],arrow:[3,20],sourceDot:[0.5,8]};
+const controlLimits={lane:[8,180],row:[12,180],spacing:[0,80],track:[1,80],call:[0.5,12],ring:[0.25,6],ringRadius:[1,24],recDot:[0.5,8],arrow:[3,20],sourceDot:[0.5,8]};
 for(const k of Object.keys(controlLimits)){
-  const update=value=>{const v=Number(value),[min,max]=controlLimits[k];if(!Number.isFinite(v)||v<min||v>max)return;const factor=visualKeys.includes(k)?Math.pow(state.density,sensitivity[k]):state.density;state.base[k]=v/factor;nearestPreset();render();};
+  const update=value=>{const v=Number(value),[min,max]=controlLimits[k];if(!Number.isFinite(v)||v<min||v>max)return;const minValue=k==='ringRadius'?effective().recDot:controlLimits[k][0];if(v<minValue)return;state.base[k]=v/state.density;if(k==='recDot'&&effective().ringRadius<effective().recDot)state.base.ringRadius=state.base.recDot;nearestPreset();render();};
   document.getElementById(k+'-range').addEventListener('input',e=>update(e.target.value));
   document.getElementById(k+'-number').addEventListener('change',e=>{update(e.target.value);syncControls();});
 }
-for(const k of visualKeys)document.getElementById(k+'-sensitivity').addEventListener('change',e=>{const v=Number(e.target.value);if(Number.isFinite(v)&&v>=0&&v<=2){sensitivity[k]=v;render();}});
 document.getElementById('save-minimal').addEventListener('click',()=>saveEndpoint('minimal'));
 document.getElementById('save-wide').addEventListener('click',()=>saveEndpoint('wide'));
-document.getElementById('generate-css').addEventListener('click',()=>{try{document.getElementById('config-output').value=cssBlock();document.getElementById('endpoint-status').textContent='CSS generated. Copy the complete block and replace the existing calibrated visual-parameters block.';}catch(error){document.getElementById('endpoint-status').textContent=error.message;}});
-document.getElementById('copy-css').addEventListener('click',async()=>{const output=document.getElementById('config-output');if(!output.value){document.getElementById('endpoint-status').textContent='Generate the CSS block before copying.';return;}try{await navigator.clipboard.writeText(output.value);document.getElementById('endpoint-status').textContent='Complete CSS block copied to clipboard.';}catch{output.focus();output.select();document.getElementById('endpoint-status').textContent='Clipboard unavailable; CSS block selected. Press Ctrl+C to copy.';}});
+document.getElementById('generate-css').addEventListener('click',()=>{try{document.getElementById('config-output').value=cssBlock();document.getElementById('endpoint-status').textContent='CSS generated. Copy the complete block and replace the existing calibrated visual-parameters block.';broadcastCalibrationState();}catch(error){document.getElementById('endpoint-status').textContent=error.message;broadcastCalibrationState();}});
+document.getElementById('copy-css').addEventListener('click',async()=>{const output=document.getElementById('config-output');if(!output.value){document.getElementById('endpoint-status').textContent='Generate the CSS block before copying.';broadcastCalibrationState();return;}try{await navigator.clipboard.writeText(output.value);document.getElementById('endpoint-status').textContent='Complete CSS block copied to clipboard.';broadcastCalibrationState();}catch{output.focus();output.select();document.getElementById('endpoint-status').textContent='Clipboard unavailable; CSS block selected. Press Ctrl+C to copy.';broadcastCalibrationState();}});
 document.getElementById('reset-calibration').addEventListener('click',()=>selectPreset(viewDefaults[activeView]));
 async function tryAutomaticLoad(){
   try{
