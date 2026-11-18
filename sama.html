@@ -4,270 +4,174 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0e161e">
-<title>Modular Function Call Matrix — Configurable Dark Theme</title>
+<title>Modular Function Call Matrix — Refined</title>
 <style>
-  /*
-   * ================================================================
-   * DISPLAY CONFIGURATION
-   * Change values in this section to tune the diagram.
-   * Set --cell-border-width to 0px to hide the inspection grid.
-   * ================================================================
-   */
   :root {
-    /* --- Overall theme --- */
-    --page-background: #0e161e;       /* Browser page background */
-    --panel-background: #17232e;      /* Matrix panel background */
-    --text-color: #e6edf5;            /* Main headings and function names */
-    --muted-color: #9eacba;            /* Subtitle and explanatory notes */
-    --legend-color: #c0ccd7;           /* Legend text */
+    /* Theme */
+    --page-background:#0e161e;
+    --panel-background:#17232e;
+    --text-color:#e6edf5;
+    --muted-color:#9eacba;
+    --legend-color:#c0ccd7;
+    --track-color:#223344;
+    --call-color:#8ecbff;
+    --conditional-color:#f2bd78;
+    --cell-border-color:#223344;
 
-    /* --- Matrix geometry --- */
-    --name-column-width: 112px;       /* Dedicated function-name column */
-    --lane-column-width: 104px;       /* Width of each call-order lane */
-    --function-row-height: 68px;      /* Vertical spacing per function row */
-    --lane-count: 8;                  /* Must match the number of lane cells in each HTML row */
-    --function-count: 8;              /* Must match the number of function rows in the HTML */
+    /* Layout presets: compact is the initial default. */
+    --name-column-width:132px;
+    --lane-column-width:36px;
+    --function-row-height:42px;
+    --track-thickness:25px;
+    --call-thickness:2.2px;
+    --conditional-dash-pattern:5 4;
+    --cell-border-width:0px;
 
-    /* --- Function tracks and call paths --- */
-    --track-color: #223344;           /* Horizontal function tracks */
-    --track-thickness: 30px;
-    --call-color: #8ecbff;            /* Unconditional call paths, dots, and arrows */
-    --call-thickness: 2.5px;
-    --conditional-color: #f2bd78;     /* Conditional call paths, dots, and arrows */
-    --conditional-thickness: 2.5px;
-    --conditional-dash-pattern: 6 5;
-
-    /* --- Table-cell inspection borders --- */
-    --cell-border-color: #223344;     /* Subtle grid color for dark theme */
-    --cell-border-width: 0px;         /* Set to 0px to turn all cell borders off */
-
-    /* --- Page and panel spacing --- */
-    --page-padding: 28px;
-    --panel-padding-top: 22px;
-    --panel-padding-horizontal: 20px;
-    --panel-padding-bottom: 18px;
-    --panel-corner-radius: 10px;
-    --panel-shadow: 0 4px 18px #00000055;
-    --content-max-width: 1120px;
-
-    /* --- Typography --- */
-    --base-font-size: 14px;
-    --heading-font-size: 22px;
-    --name-font-size: 14px;
-    --subtitle-gap: 24px;
-    --legend-font-size: 12px;
-    --notes-font-size: 12px;
-
-    /* --- Legend and annotation spacing --- */
-    --legend-gap: 20px;
-    --legend-line-width: 28px;
-    --legend-top-gap: 20px;
-    --notes-top-gap: 18px;
+    /* Page and typography */
+    --page-padding:22px;
+    --panel-padding:16px;
+    --panel-radius:10px;
+    --base-font-size:13px;
+    --heading-font-size:21px;
+    --name-font-size:12px;
+    --legend-font-size:11px;
+    --content-max-width:1500px;
   }
-
-  * { box-sizing: border-box; }
-
-  body {
-    margin: 0;
-    padding: var(--page-padding);
-    color: var(--text-color);
-    background: var(--page-background);
-    font: var(--base-font-size)/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
-  }
-
-  main { max-width: var(--content-max-width); margin: 0 auto; }
-  h1 { margin: 0 0 6px; font-size: var(--heading-font-size); font-weight: 650; }
-  .subtitle { margin: 0 0 var(--subtitle-gap); color: var(--muted-color); }
-
-  .matrix-shell {
-    overflow-x: auto;
-    padding: var(--panel-padding-top) var(--panel-padding-horizontal) var(--panel-padding-bottom);
-    background: var(--panel-background);
-    border-radius: var(--panel-corner-radius);
-    box-shadow: var(--panel-shadow);
-  }
-
-  .matrix {
-    position: relative;
-    width: calc(var(--name-column-width) + var(--lane-count) * var(--lane-column-width));
-    min-width: calc(var(--name-column-width) + var(--lane-count) * var(--lane-column-width));
-    height: calc(var(--function-count) * var(--function-row-height));
-  }
-
-  table {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    table-layout: fixed;
-    border: 0;
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-
-  col.name { width: var(--name-column-width); }
-  col.slot { width: var(--lane-column-width); }
-
-  td {
-    height: var(--function-row-height);
-    border: var(--cell-border-width) solid var(--cell-border-color);
-    padding: 0;
-    margin: 0;
-    vertical-align: middle;
-  }
-
-  td.name {
-    padding: 0 10px 0 0;
-    text-align: right;
-    white-space: nowrap;
-    font: 600 var(--name-font-size)/1.0 ui-monospace, SFMono-Regular, Consolas, monospace;
-    background: transparent;
-    position: relative;
-    z-index: 2;
-  }
-
-  td.slot { background: transparent; }
-
-  svg.overlay {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .function-track {
-    stroke: var(--track-color);
-    stroke-width: var(--track-thickness);
-    fill: none;
-  }
-
-  .call-path {
-    stroke: var(--call-color);
-    stroke-width: var(--call-thickness);
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .conditional-path {
-    stroke: var(--conditional-color);
-    stroke-width: var(--conditional-thickness);
-    stroke-dasharray: var(--conditional-dash-pattern);
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .source-dot { fill: var(--call-color); }
-  .conditional-dot { fill: var(--conditional-color); }
-
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--legend-gap);
-    margin: var(--legend-top-gap) 0 0 4px;
-    color: var(--legend-color);
-    font-size: var(--legend-font-size);
-  }
-
-  .legend-item { display: inline-flex; align-items: center; gap: 7px; }
-  .legend-line { width: var(--legend-line-width); border-top: var(--call-thickness) solid var(--call-color); }
-  .legend-line.dashed { border-top-style: dashed; border-color: var(--conditional-color); }
-  .legend-track { width: var(--legend-line-width); border-top: var(--track-thickness) solid var(--track-color); }
-  .legend-border { width: var(--legend-line-width); border-top: var(--cell-border-width) solid var(--cell-border-color); }
-  .notes { margin: var(--notes-top-gap) 4px 0; color: var(--muted-color); font-size: var(--notes-font-size); }
-
-  @media (max-width: 700px) {
-    body { padding: 14px; }
-    .matrix-shell { padding: 14px 10px; }
-  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:var(--page-padding);color:var(--text-color);background:var(--page-background);font:var(--base-font-size)/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+  main{max-width:var(--content-max-width);margin:0 auto}
+  h1{font-size:var(--heading-font-size);margin:0 0 4px;font-weight:650}
+  .subtitle{margin:0 0 15px;color:var(--muted-color)}
+  .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:0 0 12px}
+  .toolbar label{color:var(--muted-color);font-size:12px}
+  select{background:#223344;color:var(--text-color);border:1px solid #405568;border-radius:6px;padding:6px 28px 6px 9px;font:inherit}
+  .status{color:var(--muted-color);font-size:11px}
+  .matrix-shell{overflow:auto;max-width:100%;padding:var(--panel-padding);background:var(--panel-background);border-radius:var(--panel-radius);box-shadow:0 4px 18px #0005}
+  .matrix{position:relative;width:max-content;min-width:100%}
+  table{position:absolute;inset:0;border-collapse:collapse;border-spacing:0;table-layout:fixed}
+  col.name{width:var(--name-column-width)}
+  col.event{width:var(--lane-column-width)}
+  td{height:var(--function-row-height);padding:0;border:var(--cell-border-width) solid var(--cell-border-color);vertical-align:middle}
+  td.name{width:var(--name-column-width);padding-right:12px;text-align:right;white-space:nowrap;font:600 var(--name-font-size)/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--text-color);background:var(--panel-background);position:relative;z-index:2}
+  td.event{background:transparent}
+  svg.overlay{position:absolute;inset:0;display:block;overflow:visible;pointer-events:none}
+  .function-track{stroke:var(--track-color);stroke-width:var(--track-thickness);stroke-linecap:round;fill:none}
+  .call-path{stroke:var(--call-color);stroke-width:var(--call-thickness);stroke-linecap:round;fill:none}
+  .conditional-path{stroke:var(--conditional-color);stroke-width:var(--call-thickness);stroke-dasharray:var(--conditional-dash-pattern);stroke-linecap:round;fill:none}
+  .source-dot{fill:var(--call-color)}
+  .conditional-dot{fill:var(--conditional-color)}
+  .event-number{fill:#8193a4;font:9px ui-monospace,monospace;text-anchor:middle}
+  .legend{display:flex;flex-wrap:wrap;gap:12px 20px;margin:14px 2px 0;color:var(--legend-color);font-size:var(--legend-font-size)}
+  .legend-item{display:inline-flex;align-items:center;gap:7px}
+  .swatch{width:25px;height:0;border-top:2px solid var(--call-color)}
+  .swatch.dashed{border-top-style:dashed;border-color:var(--conditional-color)}
+  .swatch.track{border-top:var(--track-thickness) solid var(--track-color)}
+  .notes{margin:12px 2px 0;color:var(--muted-color);font-size:11px;max-width:1000px}
+  @media(max-width:700px){body{padding:12px}.matrix-shell{padding:12px}}
 </style>
 </head>
 <body>
 <main>
   <h1>Modular Function Call Matrix</h1>
-  <p class="subtitle">Configurable dark theme · eight functions · seven call relationships</p>
-
-  <section class="matrix-shell" aria-label="Function call matrix">
-    <div class="matrix">
-      <table aria-label="Functions and call positions">
-        <colgroup>
-          <col class="name">
-          <col class="slot"><col class="slot"><col class="slot"><col class="slot">
-          <col class="slot"><col class="slot"><col class="slot"><col class="slot">
-        </colgroup>
-        <tbody>
-          <tr><td class="name">A.a1</td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td></tr>
-          <tr><td class="name">A.a2</td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td></tr>
-          <tr><td class="name">B.b1</td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td></tr>
-          <tr><td class="name">B.b2</td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td></tr>
-          <tr><td class="name">B.b3</td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td></tr>
-          <tr><td class="name">C.c1</td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td></tr>
-          <tr><td class="name">C.c2</td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td></tr>
-          <tr><td class="name">C.c3</td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td><td class="slot"></td></tr>
-        </tbody>
-      </table>
-
-      <!-- One SVG coordinate plane keeps all function tracks and call paths aligned. -->
-      <svg class="overlay" viewBox="0 0 944 544" preserveAspectRatio="none" role="img" aria-label="Call arrows connecting the functions">
-        <defs>
-          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
-            <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--call-color)" />
-          </marker>
-          <marker id="arrow-conditional" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
-            <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--conditional-color)" />
-          </marker>
-        </defs>
-
-        <g class="function-track">
-          <path d="M112 34 H944"/><path d="M112 102 H944"/>
-          <path d="M112 170 H944"/><path d="M112 238 H944"/>
-          <path d="M112 306 H944"/><path d="M112 374 H944"/>
-          <path d="M112 442 H944"/><path d="M112 510 H944"/>
-        </g>
-
-        <!-- 1. A.a1 calls A.a2. -->
-        <path class="call-path" d="M216 34 H246 V102 H216" marker-end="url(#arrow)"/>
-        <circle class="source-dot" cx="216" cy="34" r="3.5"/>
-
-        <!-- 2. A.a1 calls B.b3. -->
-        <path class="call-path" d="M320 34 H350 V306 H320" marker-end="url(#arrow)"/>
-        <circle class="source-dot" cx="320" cy="34" r="3.5"/>
-
-        <!-- 3. B.b3 conditionally calls B.b2. -->
-        <path class="conditional-path" d="M424 306 H454 V238 H424" marker-end="url(#arrow-conditional)"/>
-        <circle class="conditional-dot" cx="424" cy="306" r="3.5"/>
-        <path d="M454 264 l6 6 -6 6 -6 -6 Z" fill="var(--panel-background)" stroke="var(--conditional-color)" stroke-width="1.7"/>
-
-        <!-- 4. B.b3 directly calls itself. -->
-        <path class="call-path" d="M528 306 H570 C592 306 592 346 570 346 H548 C530 346 530 326 548 326" marker-end="url(#arrow)"/>
-        <circle class="source-dot" cx="528" cy="306" r="3.5"/>
-
-        <!-- 5. A.a2 calls B.b1. -->
-        <path class="call-path" d="M632 102 H662 V170 H632" marker-end="url(#arrow)"/>
-        <circle class="source-dot" cx="632" cy="102" r="3.5"/>
-
-        <!-- 6. B.b1 calls A.a2. -->
-        <path class="call-path" d="M736 170 H766 V102 H736" marker-end="url(#arrow)"/>
-        <circle class="source-dot" cx="736" cy="170" r="3.5"/>
-
-        <!-- 7. C.c1 calls A.a2. -->
-        <path class="call-path" d="M840 374 H884 V102 H840" marker-end="url(#arrow)"/>
-        <circle class="source-dot" cx="840" cy="374" r="3.5"/>
-      </svg>
+  <p class="subtitle">Refined layout prototype · 20 functions · 30 illustrative call events</p>
+  <div class="toolbar">
+    <label for="layout">Layout density</label>
+    <select id="layout" aria-label="Layout density">
+      <option value="compact" selected>Compact</option>
+      <option value="loose">Loose</option>
+      <option value="wide">Wide</option>
+    </select>
+    <span class="status" id="dimensions" aria-live="polite"></span>
+  </div>
+  <section class="matrix-shell" aria-label="Function call matrix; scroll horizontally when needed">
+    <div class="matrix" id="matrix">
+      <table id="function-table" aria-label="Function rows and call-event columns"><colgroup id="columns"></colgroup><tbody id="rows"></tbody></table>
+      <svg class="overlay" id="overlay" role="img" aria-label="Each vertical connector represents one call event, from caller row to callee row"></svg>
     </div>
-
     <div class="legend" aria-label="Legend">
-      <span class="legend-item"><span class="legend-track"></span> Function track</span>
-      <span class="legend-item"><span class="legend-line"></span> Unconditional call (arrow points to callee)</span>
-      <span class="legend-item"><span class="legend-line dashed"></span> Conditional call</span>
-      <span class="legend-item"><span class="legend-border"></span> HTML table-cell border</span>
+      <span class="legend-item"><span class="swatch track"></span> Function track</span>
+      <span class="legend-item"><span class="swatch"></span> Unconditional call</span>
+      <span class="legend-item"><span class="swatch dashed"></span> Conditional call</span>
+      <span class="legend-item">Arrowhead points to callee</span>
     </div>
-    <p class="notes">The two opposing arrows between A.a2 and B.b1 represent mutual recursion. The loop beside B.b3 represents direct recursion. The display settings are grouped at the top of the CSS. Set --cell-border-width to 0px to hide the inspection grid. Function tracks begin at the second column, leaving the name column clear. Blue marks unconditional calls; amber marks conditional calls.</p>
+    <p class="notes">Reading the matrix: each horizontal track is a function; each successive vertical column is one statically inferred call event. A connector begins on the caller's track and ends on the callee's track. Separate event columns prevent connectors from crossing. Self-recursion is shown as a small loop within its event column. This is an illustrative stress-test dataset, not a trace of a real program.</p>
   </section>
 </main>
+<script>
+const functionsList = [
+  "A.main","A.initialize","A.loadConfig","A.run",
+  "B.parseInput","B.validateInput","B.normalizeInput","B.dispatch",
+  "C.readFile","C.decodeData","C.transformData","C.processRecord",
+  "D.writeOutput","D.commitOutput","D.logMessage","D.handleError",
+  "U.trim","U.split","U.join","U.cleanup"
+];
+
+// Each item is one call event, in the illustrative inferred sequence.
+// from/to are function-row indexes; conditional marks a conditional call.
+const calls = [
+  [0,1,0],[0,2,0],[0,14,0],[1,16,0],[1,2,1],
+  [2,4,0],[2,8,0],[4,5,1],[4,17,0],[5,6,0],
+  [6,7,0],[7,10,1],[7,11,0],[8,9,0],[9,10,0],
+  [10,11,0],[11,12,0],[11,15,1],[12,13,0],[13,14,0],
+  [14,16,0],[14,15,1],[15,19,0],[16,17,0],[17,18,0],
+  [18,19,0],[3,7,0],[3,12,1],[6,6,0],[0,19,1]
+].map(([from,to,conditional])=>({from,to,conditional:Boolean(conditional)}));
+
+const presets = {
+  compact:{name:132,lane:36,row:42,track:25},
+  loose:{name:150,lane:52,row:54,track:30},
+  wide:{name:170,lane:68,row:66,track:34}
+};
+const NS="http://www.w3.org/2000/svg";
+const matrix=document.getElementById('matrix');
+const table=document.getElementById('function-table');
+const columns=document.getElementById('columns');
+const rows=document.getElementById('rows');
+const svg=document.getElementById('overlay');
+const dimensions=document.getElementById('dimensions');
+
+function svgEl(tag,attrs,parent=svg){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);parent.appendChild(el);return el;}
+function render(){
+  const p=presets[document.getElementById('layout').value];
+  const W=p.name+calls.length*p.lane;
+  const H=functionsList.length*p.row;
+  matrix.style.width=W+'px';matrix.style.height=H+'px';
+  table.style.width=W+'px';table.style.height=H+'px';
+  columns.replaceChildren();
+  const nameCol=document.createElement('col');nameCol.className='name';columns.appendChild(nameCol);
+  for(let i=0;i<calls.length;i++){const c=document.createElement('col');c.className='event';columns.appendChild(c);}
+  rows.replaceChildren();
+  functionsList.forEach(name=>{const tr=document.createElement('tr');const label=document.createElement('td');label.className='name';label.textContent=name;tr.appendChild(label);for(let i=0;i<calls.length;i++){const td=document.createElement('td');td.className='event';tr.appendChild(td);}rows.appendChild(tr);});
+  svg.replaceChildren();svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('preserveAspectRatio','xMinYMin meet');
+  const defs=svgEl('defs',{});
+  const marker=svgEl('marker',{id:'arrow',markerWidth:7,markerHeight:7,refX:5.8,refY:3.5,orient:'auto',markerUnits:'userSpaceOnUse'},defs);
+  svgEl('path',{d:'M0 0 L7 3.5 L0 7 Z',fill:'var(--call-color)'},marker);
+  const markerC=svgEl('marker',{id:'arrow-c',markerWidth:7,markerHeight:7,refX:5.8,refY:3.5,orient:'auto',markerUnits:'userSpaceOnUse'},defs);
+  svgEl('path',{d:'M0 0 L7 3.5 L0 7 Z',fill:'var(--conditional-color)'},markerC);
+  const tracks=svgEl('g',{class:'function-track'});
+  functionsList.forEach((_,i)=>{const y=(i+.5)*p.row;svgEl('path',{d:`M${p.name} ${y} H${W}`},tracks);});
+  calls.forEach((call,i)=>{
+    const x=p.name+(i+.5)*p.lane;
+    const y1=(call.from+.5)*p.row;
+    const y2=(call.to+.5)*p.row;
+    const cls=call.conditional?'conditional-path':'call-path';
+    const markerEnd=call.conditional?'url(#arrow-c)':'url(#arrow)';
+    if(call.from===call.to){
+      const r=Math.min(10,p.lane*.28);
+      const d=`M${x-r} ${y1} C${x-r} ${y1-2.8*r},${x+r} ${y1-2.8*r},${x+r} ${y1}`;
+      svgEl('path',{d,class:cls,'marker-end':markerEnd});
+      svgEl('circle',{cx:x-r,cy:y1,r:2.5,class:call.conditional?'conditional-dot':'source-dot'});
+    }else{
+      const top=Math.min(y1,y2),bottom=Math.max(y1,y2);
+      // A dedicated vertical event column is the no-crossing routing rule.
+      svgEl('path',{d:`M${x} ${y1} V${y2}`,class:cls,'marker-end':markerEnd});
+      svgEl('circle',{cx:x,cy:y1,r:2.5,class:call.conditional?'conditional-dot':'source-dot'});
+    }
+  });
+  dimensions.textContent=`${functionsList.length} function rows · ${calls.length} call columns · ${W} × ${H} px`;
+}
+document.getElementById('layout').addEventListener('change',render);
+render();
+</script>
 </body>
 </html>
