@@ -1,0 +1,608 @@
+{
+  "project": "GHPUtil",
+  "archive": "github_publish(16).zip",
+  "analysis_method": "Static source inspection of the extracted Bash scripts. No scripts were executed.",
+  "module": {
+    "rows": [
+      "github_publish.sh",
+      "config.sh",
+      "validation.sh",
+      "git_inspection.sh",
+      "github_api.sh",
+      "git_publish.sh",
+      "install.sh",
+      "github-publish.conf.example",
+      ".github-publish.conf"
+    ],
+    "calls": [
+      {
+        "from": 0,
+        "to": 1,
+        "conditional": false,
+        "kind": "source",
+        "label": "Bash source"
+      },
+      {
+        "from": 0,
+        "to": 2,
+        "conditional": false,
+        "kind": "source",
+        "label": "Bash source"
+      },
+      {
+        "from": 0,
+        "to": 3,
+        "conditional": false,
+        "kind": "source",
+        "label": "Bash source"
+      },
+      {
+        "from": 0,
+        "to": 4,
+        "conditional": false,
+        "kind": "source",
+        "label": "Bash source"
+      },
+      {
+        "from": 0,
+        "to": 5,
+        "conditional": false,
+        "kind": "source",
+        "label": "Bash source"
+      },
+      {
+        "from": 1,
+        "to": 7,
+        "conditional": true,
+        "kind": "read",
+        "label": "template read during initialization"
+      },
+      {
+        "from": 1,
+        "to": 8,
+        "conditional": true,
+        "kind": "read",
+        "label": "project configuration read"
+      },
+      {
+        "from": 6,
+        "to": 0,
+        "conditional": true,
+        "kind": "copy",
+        "label": "installer copies package file"
+      },
+      {
+        "from": 6,
+        "to": 1,
+        "conditional": true,
+        "kind": "copy",
+        "label": "installer copies package file"
+      },
+      {
+        "from": 6,
+        "to": 2,
+        "conditional": true,
+        "kind": "copy",
+        "label": "installer copies package file"
+      },
+      {
+        "from": 6,
+        "to": 3,
+        "conditional": true,
+        "kind": "copy",
+        "label": "installer copies package file"
+      },
+      {
+        "from": 6,
+        "to": 4,
+        "conditional": true,
+        "kind": "copy",
+        "label": "installer copies package file"
+      },
+      {
+        "from": 6,
+        "to": 5,
+        "conditional": true,
+        "kind": "copy",
+        "label": "installer copies package file"
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "conditional": true,
+        "kind": "copy",
+        "label": "installer copies package file"
+      }
+    ],
+    "description": "Package file relationships: solid = Bash source at runtime; dashed = file read or copied by installer."
+  },
+  "function": {
+    "rows": [
+      "bootstrap()",
+      "main()",
+      "usage()",
+      "parse_arguments()",
+      "prepare_project_config()",
+      "load_project_config()",
+      "resolve_effective_config()",
+      "resolve_visibility()",
+      "confirm_repository_creation()",
+      "die()",
+      "log_timestamp_style()",
+      "log()",
+      "log_prompt()",
+      "run_step()",
+      "validate_enum()",
+      "resolve_project_root()",
+      "initialize_logging()",
+      "validate_dependencies()",
+      "inspect_local_repository()",
+      "inspect_origin_remote()",
+      "remote_matches_intended_repository()",
+      "load_github_token()",
+      "cleanup_api_temp()",
+      "api_request()",
+      "github_authenticate()",
+      "check_github_repository()",
+      "github_create_repository()",
+      "api_error_message()",
+      "configure_origin_remote()",
+      "verify_ssh_authentication()",
+      "publish_branch()",
+      "verify_publication()",
+      "report_dry_run()",
+      "report_success()",
+      "install_main()"
+    ],
+    "calls": [
+      {
+        "from": 0,
+        "to": 1,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 1,
+        "to": 13,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 1,
+        "to": 3,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 15,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 16,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 4,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 5,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 6,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 17,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 18,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 21,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 24,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 19,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 25,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 7,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 8,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 26,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 28,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 29,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 30,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 31,
+        "conditional": true,
+        "kind": "run_step dispatch"
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 1,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 1,
+        "to": 32,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 1,
+        "to": 33,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 1,
+        "to": 22,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 1,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 13,
+        "to": 22,
+        "conditional": true,
+        "kind": "failure cleanup"
+      },
+      {
+        "from": 4,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 4,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 4,
+        "to": 12,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 5,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 5,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 6,
+        "to": 14,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 6,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 6,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 7,
+        "to": 14,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 7,
+        "to": 12,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 8,
+        "to": 12,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 9,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 11,
+        "to": 10,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 3,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 14,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 15,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 16,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 17,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 18,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 18,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 19,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 19,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 21,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 23,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 24,
+        "to": 23,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 24,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 25,
+        "to": 23,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 25,
+        "to": 27,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 25,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 26,
+        "to": 23,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 26,
+        "to": 27,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 26,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 26,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 28,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 28,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 29,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 29,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 30,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 30,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 31,
+        "to": 9,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 31,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 32,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      },
+      {
+        "from": 33,
+        "to": 11,
+        "conditional": false,
+        "kind": "direct"
+      }
+    ],
+    "description": "Static function relationships. Dashed amber = call target dispatched through run_step or failure-only cleanup. Ordering is an inferred workflow/declaration presentation, not a runtime trace."
+  },
+  "notes": [
+    "github_publish.sh is the normal runtime entry point and sources five implementation modules.",
+    "install.sh is a separate installer entry point; it copies six shell scripts and the configuration template.",
+    "config.sh reads github-publish.conf.example when initializing a project and reads the project .github-publish.conf at runtime.",
+    "The project configuration is data, not a sourced Bash module.",
+    "run_step invokes function names passed to it by main; the targets are represented as dashed dispatch edges.",
+    "Functions with no identified user-defined caller remain in the diagram; this does not prove they are unused.",
+    "Calls into Bash builtins, external commands, and operating-system utilities are excluded from the function-to-function graph."
+  ]
+}
